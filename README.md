@@ -4,22 +4,59 @@ This project builds a local Python RAG pipeline over Economic Times Tech article
  
 ## Setup And Run
 
+The repository includes pre-extracted article records in `data/records/`, so you can evaluate indexing and querying immediately without waiting for web scraping.
+
+### 1. Environment Setup
+
+**Windows (PowerShell):**
 ```powershell
 python -m venv .venv
 . .venv/Scripts/Activate.ps1
 pip install -r requirements.txt
 Copy-Item .env.example .env
-# Add your GEMINI_API_KEY into .env (or pass --api-key on the CLI)
+```
 
-python scrape.py
-python extract.py
+**macOS / Linux (Bash):**
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+```
+
+> **Note on API Keys:** `GEMINI_API_KEY` is completely optional. Without a key, the pipeline runs deterministically with full source citations. With a key added to `.env` or passed via `--api-key`, Gemini provides an LLM-synthesized answer.
+
+---
+
+### 2. Quick Evaluation (Instant Testing)
+
+Index the pre-extracted articles and test queries:
+
+```bash
+# Index records into ChromaDB
 python index.py
+
+# Query the corpus
 python query.py "List all articles mentioning Bengaluru"
+
+# Run the automated sample evaluation suite
 python query.py --run-samples
+
+# Run the complete unit test suite
 pytest
 ```
 
-`GEMINI_API_KEY` is optional. Without it, extraction uses deterministic heuristics and querying returns labelled, source-backed corpus excerpts. With a key, Gemini produces a concise grounded synthesis in addition to the same cited sources.
+---
+
+### 3. Full Pipeline from Scratch (Scraping & Extraction)
+
+If you wish to test live scraping and parsing end-to-end:
+
+```bash
+python scrape.py   # Discovers and downloads latest ET Tech articles into data/raw/
+python extract.py  # Cleans, extracts entities/dates/categories into data/records/
+python index.py    # Chunks and indexes records into ChromaDB
+```
 
 ### Running on Other Devices & API Key Configuration
 
