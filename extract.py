@@ -200,15 +200,16 @@ def funding_for(text: str, category: str) -> Funding | None:
     )
 
 
-def ask_gemini(
-    html_text: str,
-    heuristic_payload: dict[str, Any],
-    api_key: str | None = None,
-) -> dict[str, Any]:
-    """Enrich heuristic extraction using LangChain ChatGoogleGenerativeAI JSON chain."""
+_GEMINI_CHAIN = None
+
+
+def _get_gemini_chain(api_key: str | None = None):
+    global _GEMINI_CHAIN
+    if _GEMINI_CHAIN is not None:
+        return _GEMINI_CHAIN
     active_key = settings.get_api_key(api_key)
     if not active_key:
-        return heuristic_payload
+        return None
     try:
         from langchain_core.output_parsers import JsonOutputParser
         from langchain_core.prompts import ChatPromptTemplate
@@ -232,7 +233,22 @@ def ask_gemini(
                 ("human", "Article text:\n{article_text}"),
             ]
         )
-        chain = prompt | llm | JsonOutputParser()
+        _GEMINI_CHAIN = prompt | llm | JsonOutputParser()
+        return _GEMINI_CHAIN
+    except Exception:
+        return None
+
+
+def ask_gemini(
+    html_text: str,
+    heuristic_payload: dict[str, Any],
+    api_key: str | None = None,
+) -> dict[str, Any]:
+    """Enrich heuristic extraction using LangChain ChatGoogleGenerativeAI JSON chain."""
+    chain = _get_gemini_chain(api_key=api_key)
+    if chain is None:
+        return heuristic_payload
+    try:
         parsed = chain.invoke({"article_text": html_text[:6000]})
     except Exception:
         return heuristic_payload
@@ -250,7 +266,10 @@ ask_ollama = ask_gemini
 
 
 def extract_article(
-    path: Path, manifest_row: dict[str, Any], api_key: str | None = None
+    path: Path,
+    manifest_row: dict[str, Any],
+    api_key: str | None = None,
+    use_llm: bool = False,
 ) -> ArticleRecord:
     html = path.read_text(encoding="utf-8", errors="ignore")
     soup = BeautifulSoup(html, "html.parser")
@@ -283,7 +302,11 @@ def extract_article(
         "category": category,
         "funding": funding_for(body, category).model_dump() if funding_for(body, category) else None,
     }
-    enriched = ask_gemini(body, heuristic_payload, api_key=api_key)
+    enriched = (
+        ask_gemini(body, heuristic_payload, api_key=api_key)
+        if use_llm
+        else heuristic_payload
+    )
     return ArticleRecord(
         id=str(manifest_row["id"]),
         url=str(manifest_row["url"]),
@@ -300,15 +323,27 @@ def extract_article(
     )
 
 
-def run_extract(force: bool = False, api_key: str | None = None) -> None:
+def run_extract(
+    force: bool = False,
+    api_key: str | None = None,
+    use_llm: bool = False,
+) -> None:
     settings.ensure_dirs()
     manifest_path = settings.raw_dir / "manifest.json"
     manifest = {row["id"]: row for row in read_json(manifest_path)} if manifest_path.exists() else {}
     error_path = settings.records_dir / "extraction_errors.log"
     if force:
         error_path.write_text("", encoding="utf-8")
+
+    html_files = sorted(settings.raw_dir.glob("*.html"))
+    total = len(html_files)
     extracted = 0
-    for html_path in sorted(settings.raw_dir.glob("*.html")):
+    skipped = 0
+
+    mode_label = "with Gemini refinement" if use_llm else "fast deterministic mode"
+    print(f"Starting extraction for {total} raw articles ({mode_label})...")
+
+    for idx, html_path in enumerate(html_files, start=1):
         article_id = html_path.stem
         output_path = settings.records_dir / f"{article_id}.json"
         row = manifest.get(article_id)
@@ -319,30 +354,44 @@ def run_extract(force: bool = False, api_key: str | None = None) -> None:
                 output_path.unlink()
             continue
         if output_path.exists() and not force:
+            skipped += 1
             continue
         try:
-            record = extract_article(html_path, row, api_key=api_key)
+            record = extract_article(html_path, row, api_key=api_key, use_llm=use_llm)
             write_json(output_path, record.model_dump(mode="json"))
             extracted += 1
+            if extracted % 10 == 0 or extracted == 1:
+                print(f"  [{idx}/{total}] Extracted: {record.title[:50]}...", flush=True)
         except (ValidationError, ValueError, OSError) as exc:
             if force and output_path.exists():
                 output_path.unlink()
             with error_path.open("a", encoding="utf-8") as handle:
                 handle.write(f"{article_id}: {exc}\n")
-    print(f"Extracted {extracted} records into {settings.records_dir}.")
+
+    print(
+        f"Extraction complete: {extracted} records extracted, "
+        f"{skipped} existing records preserved in {settings.records_dir}."
+    )
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Extract validated article records.")
     parser.add_argument("--force", action="store_true", help="Re-extract existing records.")
     parser.add_argument(
+        "--use-gemini",
+        action="store_true",
+        help="Use Gemini LLM to refine extracted fields (slower due to remote API rate limits).",
+    )
+    parser.add_argument(
         "--api-key",
         default=None,
-        help="Gemini API Key (optional, defaults to GEMINI_API_KEY from environment or .env).",
+        help="Gemini API Key override (enables Gemini refinement if provided).",
     )
     args = parser.parse_args()
-    run_extract(force=args.force, api_key=args.api_key)
+    use_llm = args.use_gemini or bool(args.api_key)
+    run_extract(force=args.force, api_key=args.api_key, use_llm=use_llm)
 
 
 if __name__ == "__main__":
     main()
+

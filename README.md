@@ -54,7 +54,7 @@ If you wish to test live scraping and parsing end-to-end:
 
 ```bash
 python scrape.py   # Discovers and downloads latest ET Tech articles into data/raw/
-python extract.py  # Cleans, extracts entities/dates/categories into data/records/
+python extract.py  # Cleans & extracts records (fast deterministic ~5s; use --use-gemini for LLM refinement)
 python index.py    # Chunks and indexes records into ChromaDB
 ```
 
