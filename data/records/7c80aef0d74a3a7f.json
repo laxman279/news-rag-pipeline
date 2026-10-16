@@ -1,0 +1,28 @@
+{
+  "author": [
+    "AFP"
+  ],
+  "body": "Small artificial intelligence models may be only months away from being able to behave like a computer worm, copying themselves from one internet-connected gadget to the next without human help, AI giant Anthropic said. The finding potentially opens a new front in the cybersecurity threats emerging from AI, which have rattled governments and the companies rushing to adopt the technology. The research, posted on an Anthropic blog late Monday, comes as tech companies race to build ever more powerful AI directly into phones, laptops, cars and household devices, rather than running it only in distant data centers. A computer worm is malicious software that spreads between machines on its own. Researchers at Anthropic said an AI version would no longer need powerful data centers to operate. Instead, it could run on networks of cheap, poorly secured consumer devices such as smart TV boxes and kitchen appliances. The researchers modeled their estimate on Kimwolf, a botnet -- a network of hijacked devices controlled by hackers -- that infected more than two million devices at its peak, mostly off-brand Android TV boxes. An AI worm of this kind would likely be slow, taking days to copy itself, William Zhou and Daniel Freeman of Anthropic said, comparing it to a slime mold or a swarm of fruit flies. But once created, it would be hard to stamp out, because there would be no central switch to turn off. The researchers said their estimate was rough, since it was based on one type of gadget and one past botnet. But over time, the amount of computing power sitting in everyday gadgets is expected to keep growing, while the AI models needed to pull this off are likely to keep getting smaller, the researchers added. Synopsis Small artificial intelligence models may be only months away from being able to behave like a computer worm, copying themselves from one internet-connected gadget to the next without human help, AI giant Anthropic said. An AI worm of this kind would likely be slow, taking days to copy itself, William Zhou and Daniel Freeman of Anthropic said, comparing it to a slime mold or a swarm of fruit flies. (Catch all the Technology News News, and Latest News Updates on The Economic Times.) ...more Elevate your knowledge and leadership skills at a cost cheaper than your daily tea. Subscribe Now",
+  "category": "policy",
+  "companies": [
+    "AI",
+    "An AI",
+    "Technology News News"
+  ],
+  "funding": null,
+  "id": "7c80aef0d74a3a7f",
+  "locations": [],
+  "people": [
+    "Android TV",
+    "William Zhou",
+    "Daniel Freeman",
+    "Synopsis Small",
+    "Latest News Updates",
+    "The Economic Times",
+    "Subscribe Now"
+  ],
+  "published_at": "2026-10-13T14:04:39Z",
+  "summary": "Small artificial intelligence models may be only months away from being able to behave like a computer worm, copying themselves from one internet-connected gadget to the next without human help, AI giant Anthropic said. The finding potentially opens a new front in the cybersecurity threats emerging from AI, which have rattled governments and the companies rushing to adopt the technology. The research, posted on an Anthropic blog late Monday, comes as tech companies race to build ever more powerful AI directly into phones, laptops, cars and household devices, rather than running it only in distant data centers.",
+  "title": "Anthropic warns of AI 'worms' spreading across smart gadgets",
+  "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/anthropic-warns-of-ai-worms-spreading-across-smart-gadgets/articleshow/134919969.cms"
+}

@@ -1,0 +1,26 @@
+.env
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Raw HTML files (keep representative sample files for extract tests)
+data/raw/*
+!data/raw/1151a3b83201a34b.html
+!data/raw/116d514aae342126.html
+!data/raw/13f8dfff139e6d67.html
+!data/raw/14d2fc326d7f8317.html
+!data/raw/1a72b68bc23b0924.html
+data/raw/manifest.json
+
+# Local vector database and logs (generated during index.py/runtime)
+data/chroma/
+data/index/
+data/**/*.log
+
+# Results (keep sample queries evaluation report)
+results/*
+!results/sample_queries.md

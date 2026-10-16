@@ -1,0 +1,29 @@
+{
+  "author": [
+    "Reuters"
+  ],
+  "body": "Nvidia's share of China's market for data-centre AI chips fell to 34% in the first half of 2026, as US export controls restricted supplies of its products and domestic rivals led by Huawei gained ground, according to an IDC report seen by Reuters. Nvidia shipped 678,000 AI accelerators in China from January through June, down 44% from a year earlier, IDC data showed. AI accelerators are specialised chips used to train and run AI models. Washington has restricted China's access to Nvidia's most powerful AI chips, limiting the range of products the US chipmaker can sell in the world's second-largest economy. Beijing, meanwhile, has promoted domestic alternatives and required Chinese companies to seek approval to import compliant Nvidia chips. Nvidia CEO Jensen Huang has repeatedly criticised Washington's export curbs, saying the policy forced a US company to cede China's $50 billion AI chip market to Huawei. IDC did not specify which Nvidia products made up its 34% market share, or whether the figure included cutting-edge chips such as the B200 and B300, which are barred from export to China but have been smuggled into the country. Nvidia did not respond to a request for comment. Huawei shipped 572,000 AI accelerators, up from more than 300,000 a year earlier, giving it a 28% share of the overall market, IDC said. Alibaba's chip-design unit T-Head held 7%, followed by Cambricon with 5%, Baidu's Kunlunxin with 4% and Hygon with 3%. Nine of the 11 Chinese chipmakers tracked by IDC increased shipments from a year earlier. Total AI-accelerator shipments reached 2.008 million units in the first half. Shipments of graphics processing units, or GPUs - the chips most widely used to train AI models - fell 26% to 991,000 units, as supplies eligible for sale in mainland China remained limited, IDC said. Shipments of other AI accelerators rose nearly 80% to 1.016 million units, overtaking GPUs by volume. This category includes chips designed for specific AI tasks, such as running trained models. Huawei, T-Head, Kunlunxin and Cambricon together accounted for 95% of the non-GPU segment, which IDC said was being adopted by government agencies, internet companies and telecoms providers. IDC said competition was shifting from the performance of a single chip to system-level capabilities, including how well chips work in a larger computing cluster. IDC expects total accelerator shipments in China to grow 19% this year, even as GPU shipments fall 9%. Synopsis Nvidia's share of China's market for data-centre AI chips fell to 34% in the first half of 2026, as US export controls restricted supplies of its products and domestic rivals led by Huawei gained ground, according to an IDC report seen by Reuters. (Catch all the Technology News News, and Latest News Updates on The Economic Times.) ...more Elevate your knowledge and leadership skills at a cost cheaper than your daily tea. Subscribe Now",
+  "category": "policy",
+  "companies": [
+    "China AI-chip",
+    "AI",
+    "Total AI-accelerator",
+    "Technology News News"
+  ],
+  "funding": null,
+  "id": "116d514aae342126",
+  "locations": [],
+  "people": [
+    "Reuters. Nvidia",
+    "Nvidia CEO Jensen Huang",
+    "Huawei. IDC",
+    "Synopsis Nvidia",
+    "Latest News Updates",
+    "The Economic Times",
+    "Subscribe Now"
+  ],
+  "published_at": "2026-10-13T04:07:17Z",
+  "summary": "Nvidia's share of China's market for data-centre AI chips fell to 34% in the first half of 2026, as US export controls restricted supplies of its products and domestic rivals led by Huawei gained ground, according to an IDC report seen by Reuters. Nvidia shipped 678,000 AI accelerators in China from January through June, down 44% from a year earlier, IDC data showed. AI accelerators are specialised chips used to train and run AI models.",
+  "title": "Nvidia's China AI-chip share falls as Huawei closes gap, report finds",
+  "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/nvidias-china-ai-chip-share-falls-as-huawei-closes-gap-report-finds/articleshow/134907732.cms"
+}

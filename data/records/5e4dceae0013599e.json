@@ -1,0 +1,29 @@
+{
+  "author": [
+    "Reuters"
+  ],
+  "body": "Anthropic said on Monday new measures designed to prevent rivals from copying the capabilities of its Claude AI models have reduced data harvested in so-called distillation attacks by about 90% to 99%. * Model distillation has emerged as a key concern for leading AI companies due to intensifying US-China competition, with firms including Anthropic, OpenAI and Google arguing the practice enables rivals to reproduce advanced capabilities more quickly and at lower cost * Anthropic said safeguards restricting access to Claude's reasoning have sharply reduced extraction attempts, with \"the number of reasoning tokens extracted by distillers\" now \"10 to 100 times lower than it was before\" * The California-headquartered company said it had made it harder to use proxy networks to repeatedly probe Claude's protected reasoning, blocking extraction attempts and hindering large-scale distillation efforts * Anthropic said its safety system is \"roughly as robust as those that prevent Claude from helping build bioweapons\" and has \"a false positive rate of less than 0.1%\" * Anthropic banned tens of thousands of accounts linked to distillation campaigns and cited Chinese AI startup Z.ai , also known as Zhipu, as an example of a company that attempted to distill capabilities from Claude while developing its GLM-5.3 model, warning such practices pose safety and national security risks * Z.AI did not immediately respond to a request for comment Synopsis Anthropic said on Monday new measures designed to prevent rivals from copying the capabilities of its Claude AI models have reduced data harvested in so-called distillation attacks (Catch all the Technology News News, and Latest News Updates on The Economic Times.) ...more Elevate your knowledge and leadership skills at a cost cheaper than your daily tea. Subscribe Now",
+  "category": "AI",
+  "companies": [
+    "AI",
+    "Claude AI",
+    "OpenAI",
+    "Chinese AI",
+    "Z.AI",
+    "Technology News News"
+  ],
+  "funding": null,
+  "id": "5e4dceae0013599e",
+  "locations": [],
+  "people": [
+    "The California-headquartered",
+    "Synopsis Anthropic",
+    "Latest News Updates",
+    "The Economic Times",
+    "Subscribe Now"
+  ],
+  "published_at": "2026-10-13T02:39:47Z",
+  "summary": "Anthropic said on Monday new measures designed to prevent rivals from copying the capabilities of its Claude AI models have reduced data harvested in so-called distillation attacks by about 90% to 99%. * Model distillation has emerged as a key concern for leading AI companies due to intensifying US-China competition, with firms including Anthropic, OpenAI and Google arguing the practice enables rivals to reproduce advanced capabilities more quickly and at lower cost * Anthropic said safeguards restricting access to Claude's reasoning have sharply reduced extraction attempts, with \"the number of reasoning tokens extracted by distillers\" now \"10 to 100 times lower than it was before\" * The California-headquartered company said it had made it harder to use proxy networks to repeatedly probe Claude's protected reasoning, blocking extraction attempts and hindering large-scale distillation efforts * Anthropic said its safety system is \"roughly as robust as those that prevent Claude from helping build bioweapons\" and has \"a false positive rate of less than 0.1%\" * Anthropic banned tens of thousands of accounts linked to distillation campaigns and cited Chinese AI startup Z.ai , also known as Zhipu, as an example of a company that attempted to distill capabilities from Claude while developing its GLM-5.3 model, warning such practices pose safety and national security risks * Z.AI did not immediately respond to a request for comment Synopsis Anthropic said on Monday new measures designed to prevent rivals from copying the capabilities of its Claude AI models have reduced data harvested in so-called distillation attacks (Catch all the Technology News News, and Latest News Updates on The Economic Times.) ...more Elevate your knowledge and leadership skills at a cost cheaper than your daily tea. Subscribe Now",
+  "title": "Anthropic says new safeguards sharply reduce AI distillation attacks",
+  "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/anthropic-says-new-safeguards-sharply-reduce-ai-distillation-attacks/articleshow/134906398.cms"
+}
