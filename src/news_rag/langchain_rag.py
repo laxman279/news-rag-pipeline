@@ -5,16 +5,24 @@ from typing import Any
 
 from config import settings
 from src.news_rag.planning import QueryPlan, chroma_where
+from src.news_rag.tracing import traceable
+
+
+_EMBEDDINGS: Any = None
 
 
 def get_embeddings():
     """Return LangChain HuggingFaceEmbeddings using the configured embedding model."""
+    global _EMBEDDINGS
+    if _EMBEDDINGS is not None:
+        return _EMBEDDINGS
     from langchain_huggingface import HuggingFaceEmbeddings
 
-    return HuggingFaceEmbeddings(
+    _EMBEDDINGS = HuggingFaceEmbeddings(
         model_name=settings.embedding_model,
         model_kwargs={"device": "cpu"},
     )
+    return _EMBEDDINGS
 
 
 def get_vectorstore():
@@ -90,8 +98,9 @@ def build_rag_chain(
         "1. Base your answer ONLY on the provided context chunks below.\n"
         "2. If the answer cannot be found or deduced from the context chunks, state: 'The answer cannot be found in the corpus.'\n"
         "3. Do not invent, assume, or hallucinate facts that are not present in the context.\n"
-        f"4. {date_guidance}\n"
-        "5. Be concise, direct, and factual in your response."
+        "4. Always cite the specific source number(s) you used (e.g. [Source 1], [Source 2]). Only cite sources that directly support your answer.\n"
+        f"5. {date_guidance}\n"
+        "6. Be concise, direct, and factual in your response."
     )
 
     prompt = ChatPromptTemplate.from_messages(
@@ -108,6 +117,7 @@ def build_rag_chain(
     return prompt | llm | StrOutputParser()
 
 
+@traceable(name="langchain_generate_answer", run_type="chain", tags=["querying"])
 def langchain_generate_answer(
     question: str,
     contexts: list[dict[str, Any]],
@@ -133,6 +143,7 @@ def langchain_generate_answer(
 
 
 
+@traceable(name="langchain_chroma_retrieve", run_type="retriever", tags=["querying"])
 def langchain_chroma_retrieve(
     question: str,
     plan: QueryPlan,
@@ -142,7 +153,7 @@ def langchain_chroma_retrieve(
     try:
         vectorstore = get_vectorstore()
     except Exception as exc:
-        print(f"[LangChain Chroma Error] Could not initialize vectorstore: {exc}", flush=True)
+        print(f"[ChromaDB Error] Could not initialize Chroma vectorstore: {exc}", flush=True)
         return []
 
     target_count = plan.limit or (max(settings.top_k, 5) if plan.is_aggregation else settings.top_k)
@@ -155,8 +166,11 @@ def langchain_chroma_retrieve(
             filter=chroma_where(plan),
         )
     except Exception as exc:
-        print(f"[LangChain Chroma Error] Similarity search failed: {exc}", flush=True)
+        print(f"[ChromaDB Error] Similarity search failed: {exc}", flush=True)
         return []
+
+    if not results:
+        print("[ChromaDB Info] Vector similarity search returned 0 results.", flush=True)
 
     rows = []
     seen_urls = set()

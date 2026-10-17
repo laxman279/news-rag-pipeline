@@ -8,8 +8,10 @@ from config import settings
 from src.news_rag.chunking import chunks_for_record
 from src.news_rag.io import load_records
 from src.news_rag.langchain_rag import get_vectorstore
+from src.news_rag.tracing import traceable
 
 
+@traceable(name="index_pipeline", run_type="chain", tags=["indexing"])
 def index_records() -> None:
     settings.ensure_dirs()
     records = load_records(settings.records_dir)

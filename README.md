@@ -112,6 +112,27 @@ Extraction accuracy is measured by spot-checking a small sample of raw HTML file
 
 The pipeline implements **recursive character chunking** using LangChain's `RecursiveCharacterTextSplitter` with hierarchical separators (`["\n\n", "\n", ". ", " ", ""]`). The default chunk size is 1200 characters with 200 characters of overlap. This ensures paragraphs and sentences are preserved intact wherever possible, avoiding unnatural cuts across semantic boundaries while maintaining precise retrieval context. The default embedding model is `sentence-transformers/all-MiniLM-L6-v2` because it is small, local, and fast enough for a coursework-sized corpus. ChromaDB is persisted under `data/chroma`.
 
+## Observability & Debugging with LangSmith
+
+LangSmith tracing is integrated across all four stages of the pipeline to monitor execution, track latency, and pinpoint failures:
+
+- **Scraping (`scrape.py`)**: Traces discovery (`scrape_discover_urls`), raw downloads (`scrape_fetch_url`), HTTP status codes, and robots.txt checks.
+- **Extracting (`extract.py`)**: Traces HTML cleaning/parsing (`extract_article`), schema validation, and Gemini JSON enrichment (`ask_gemini_enrichment`).
+- **Indexing (`index.py`)**: Traces batch chunking, document creation, and vector store upserts into ChromaDB (`index_pipeline`).
+- **Querying (`query.py` & `src/news_rag/langchain_rag.py`)**: Traces query planning (`rag_query_pipeline`), vector retrieval (`chroma_retrieval`), lexical fallback (`lexical_retrieval`), and Gemini answer generation (`gemini_answer_generation`).
+
+### Enabling LangSmith Tracing
+
+1. Add your LangSmith API key to `.env`:
+   ```env
+   LANGSMITH_TRACING=true
+   LANGSMITH_API_KEY=your-langsmith-api-key-here
+   LANGSMITH_PROJECT=news-rag-pipeline
+   ```
+2. Run any stage (`python scrape.py`, `python extract.py`, `python index.py`, or `python query.py ...`).
+3. View the trace trees, run durations, input/output payloads, and error stack traces in real time on [smith.langchain.com](https://smith.langchain.com).
+4. If `LANGSMITH_API_KEY` is not provided, tracing is disabled gracefully without any errors or overhead.
+
 ## Known Limitations
 
 The entity and funding heuristics are intentionally lightweight and can confuse names, companies, and branded phrases when running without LLM refinement. Economic Times page structure can change; a changed structure may cause date extraction failures or fewer than `MIN_ARTICLES` permitted URLs, which the pipeline now reports instead of silently fabricating data or indexing a partial corpus. Local embeddings (`sentence-transformers/all-MiniLM-L6-v2` via HuggingFace) keep indexing private and offline, while Gemini can optionally improve extraction and answer synthesis.

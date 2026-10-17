@@ -178,12 +178,18 @@ def plan_query(
             "show ",
         )
     ) or (limit is not None and limit > 1)
-    direct_records = (
-        is_aggregation
-        or location is not None
+    # Direct records retrieval is only for explicit structured filters where vector similarity
+    # is unnecessary (e.g. strict location matching, quoted title lookup, or specific mentioned terms).
+    # Open-ended aggregation queries without a structured filter (e.g. "list articles that talk about UPI")
+    # must go through Chroma vector search.
+    has_structured_filter = (
+        location is not None
         or title_match is not None
         or bool(mentioned_terms)
+        or (list_all and category is not None)
     )
+    direct_records = has_structured_filter
+
     return QueryPlan(
         question=question,
         date_range=date_range,

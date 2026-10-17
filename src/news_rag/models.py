@@ -27,6 +27,7 @@ class ArticleRecord(BaseModel):
     people: list[str] = Field(default_factory=list)
     locations: list[str] = Field(default_factory=list)
     category: str
+    categories: list[str] = Field(default_factory=list)
     funding: Funding | None = None
 
     @field_validator("published_at")
@@ -41,17 +42,6 @@ class ArticleRecord(BaseModel):
     @field_validator("category")
     @classmethod
     def validate_category(cls, value: str) -> str:
-        allowed = {
-            "funding",
-            "product launch",
-            "policy",
-            "M&A",
-            "layoffs",
-            "AI",
-            "earnings",
-            "general",
-        }
-        normalized = value.strip()
         aliases = {
             "m&a": "M&A",
             "merger": "M&A",
@@ -59,13 +49,36 @@ class ArticleRecord(BaseModel):
             "artificial intelligence": "AI",
             "ai": "AI",
         }
+        normalized = value.strip()
         normalized = aliases.get(normalized.lower(), normalized)
-        if normalized not in allowed:
-            return "general"
-        return normalized
+        return normalized or "general"
+
+    @field_validator("categories", mode="before")
+    @classmethod
+    def validate_categories(cls, value: Any) -> list[str]:
+        if not value:
+            return []
+        if isinstance(value, str):
+            value = [value]
+        aliases = {
+            "m&a": "M&A",
+            "merger": "M&A",
+            "acquisition": "M&A",
+            "artificial intelligence": "AI",
+            "ai": "AI",
+        }
+        cleaned: list[str] = []
+        for item in value:
+            if isinstance(item, str) and item.strip():
+                raw = item.strip()
+                norm = aliases.get(raw.lower(), raw)
+                if norm not in cleaned:
+                    cleaned.append(norm)
+        return cleaned
 
     def metadata(self) -> dict[str, Any]:
         dt = datetime.fromisoformat(self.published_at.replace("Z", "+00:00"))
+        cats = self.categories if self.categories else [self.category]
         return {
             "article_id": self.id,
             "url": str(self.url),
@@ -74,6 +87,7 @@ class ArticleRecord(BaseModel):
             "published_epoch": int(dt.timestamp()),
             "published_yyyymmdd": int(dt.strftime("%Y%m%d")),
             "category": self.category,
+            "categories": ", ".join(cats),
             "companies": ", ".join(self.companies),
             "locations": ", ".join(self.locations),
             "has_funding": self.funding is not None,

@@ -15,6 +15,7 @@ from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_ex
 from urllib3.util.retry import Retry
 
 from config import settings
+from src.news_rag.tracing import traceable
 from src.news_rag.url_utils import article_id, canonicalize_url, looks_like_et_tech_article
 
 
@@ -52,6 +53,7 @@ def allowed(robots: robotparser.RobotFileParser | None, url: str) -> bool:
     return robots is not None and robots.can_fetch(settings.user_agent, url)
 
 
+@traceable(name="scrape_fetch_url", run_type="tool", tags=["scraping"])
 @retry(
     retry=retry_if_exception_type(requests.RequestException),
     wait=wait_exponential(multiplier=1, min=1, max=12),
@@ -99,6 +101,7 @@ def category_pages() -> list[str]:
     ] + [f"{base}/{page}" for page in range(2, 8)]
 
 
+@traceable(name="scrape_discover_urls", run_type="tool", tags=["scraping"])
 def discover_urls(session: requests.Session, robots: robotparser.RobotFileParser | None) -> list[str]:
     urls = discover_from_rss(session) if allowed(robots, settings.target_rss_url) else set()
     for page in category_pages():
@@ -126,6 +129,7 @@ def write_manifest(path: Path, rows: list[dict[str, object]]) -> None:
     path.write_text(json.dumps(rows, indent=2, sort_keys=True), encoding="utf-8")
 
 
+@traceable(name="scrape_pipeline", run_type="chain", tags=["scraping"])
 def scrape(limit: int | None = None) -> None:
     settings.ensure_dirs()
     session = build_session()

@@ -80,6 +80,45 @@ class Settings:
     )
     top_k: int = _int_env("TOP_K", 5)
 
+    langsmith_api_key: str = (
+        os.getenv("LANGSMITH_API_KEY")
+        or os.getenv("LANGCHAIN_API_KEY")
+        or ""
+    ).strip()
+    langsmith_project: str = os.getenv(
+        "LANGSMITH_PROJECT",
+        os.getenv("LANGCHAIN_PROJECT", "news-rag-pipeline"),
+    ).strip()
+    langsmith_endpoint: str = os.getenv(
+        "LANGSMITH_ENDPOINT",
+        os.getenv("LANGCHAIN_ENDPOINT", "https://api.smith.langchain.com"),
+    ).strip()
+    langsmith_tracing: bool = _bool_env(
+        "LANGSMITH_TRACING",
+        _bool_env(
+            "LANGCHAIN_TRACING_V2",
+            bool(
+                os.getenv("LANGSMITH_API_KEY")
+                or os.getenv("LANGCHAIN_API_KEY")
+            ),
+        ),
+    )
+
+    def setup_langsmith(self) -> None:
+        """Configure LangSmith tracing environment variables if configured."""
+        active_key = self.langsmith_api_key
+        if active_key and self.langsmith_tracing:
+            os.environ["LANGSMITH_TRACING"] = "true"
+            os.environ["LANGCHAIN_TRACING_V2"] = "true"
+            os.environ["LANGSMITH_API_KEY"] = active_key
+            os.environ["LANGCHAIN_API_KEY"] = active_key
+            os.environ["LANGSMITH_PROJECT"] = self.langsmith_project
+            os.environ["LANGCHAIN_PROJECT"] = self.langsmith_project
+            os.environ["LANGSMITH_ENDPOINT"] = self.langsmith_endpoint
+        else:
+            os.environ["LANGSMITH_TRACING"] = "false"
+            os.environ["LANGCHAIN_TRACING_V2"] = "false"
+
     def ensure_dirs(self) -> None:
         self.raw_dir.mkdir(parents=True, exist_ok=True)
         self.records_dir.mkdir(parents=True, exist_ok=True)
@@ -88,3 +127,4 @@ class Settings:
 
 
 settings = Settings()
+settings.setup_langsmith()

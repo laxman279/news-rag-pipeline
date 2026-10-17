@@ -2,9 +2,25 @@
   "author": [
     "PTI"
   ],
-  "body": "Indian fintech companies raised USD 2.2 billion in January-September 2026, up 14 per cent from a year earlier, even as the number of funding rounds fell 41 per cent, with five deals of USD 100 million or more making up nearly half the total, according to Tracxn. Funding in the first nine months of 2025 stood at USD 1.9 billion. The number of rounds dropped to 153 from 260 a year ago, the data intelligence platform said in a report. This year's funding is still only about 40 per cent of the peak of USD 5.5 billion recorded in the first nine months of 2021. The five largest rounds together brought in about USD 1.1 billion. CRED's USD 540 million Series H round in June, backed by Meta, alone accounted for about a quarter of all funding. The others were KreditBee's USD 220 million Series E in April, Weaver's USD 103 million Series B in March, Slice's USD 100 million Series D in September and Navi's USD 100 million Series C in August. Late-stage funding, which includes Series C and later, private equity and pre-IPO rounds, nearly doubled to USD 1.5 billion from USD 751 million, despite fewer deals (25 against 30). It made up 67 per cent of all capital raised and was the only stage to grow. Early-stage funding (Series A and B) fell 33 per cent to USD 668 million across 52 rounds, from USD 1 billion across 82 rounds. Seed funding dropped 57 per cent to USD 73.8 million across 76 rounds, from USD 173 million across 148 rounds. The number of companies raising funds for the first time nearly halved to 30 from 59, the report said. Existing investors in the sector fell to 125 from 192, and first-time investors fell to 33 from 48. By segment, digital lending attracted the most funding at USD 809 million, followed by payments at USD 776 million and investment tech at USD 450 million. Bengaluru's share of fintech funding rose to 62 per cent (USD 1.4 billion) from 52 per cent a year earlier. Mumbai followed with 24 per cent and Gurugram with 7 per cent. The sector produced three new unicorns, startups valued at USD 1 billion or more: Square Yards, KreditBee and Neo Group, compared with two a year earlier. There were three initial public offerings, up from two. They were led by Augmont, which had a market capitalisation of USD 757 million at its IPO in August, followed by Turtlemint (USD 471 million, June) and Kissht (USD 305 million, May). Acquisitions fell 45 per cent to 11 from 20. The largest was Indiabulls Group's USD 110 million purchase of Fintech Cloud, followed by Oxyzo's acquisition of GoldenPi for USD 4.4 million and Choice's purchase of Fintoo for USD 1.1 million. Synopsis Funding in the first nine months of 2025 stood at USD 1.9 billion. The number of rounds dropped to 153 from 260 a year ago, the data intelligence platform said in a report. (Catch all the Technology News News, and Latest News Updates on The Economic Times.) ...more Elevate your knowledge and leadership skills at a cost cheaper than your daily tea. Subscribe Now",
-  "category": "funding",
-  "companies": [],
+  "body": "Indian fintech companies raised USD 2.2 billion in January-September 2026, up 14 per cent from a year earlier, even as the number of funding rounds fell 41 per cent, with five deals of USD 100 million or more making up nearly half the total, according to Tracxn.\n\nFunding in the first nine months of 2025 stood at USD 1.9 billion. The number of rounds dropped to 153 from 260 a year ago, the data intelligence platform said in a report.\n\nThis year's funding is still only about 40 per cent of the peak of USD 5.5 billion recorded in the first nine months of 2021.\n\nThe five largest rounds together brought in about USD 1.1 billion. CRED's USD 540 million Series H round in June, backed by Meta, alone accounted for about a quarter of all funding.\n\nThe others were KreditBee's USD 220 million Series E in April, Weaver's USD 103 million Series B in March, Slice's USD 100 million Series D in September and Navi's USD 100 million Series C in August.\n\nLate-stage funding, which includes Series C and later, private equity and pre-IPO rounds, nearly doubled to USD 1.5 billion from USD 751 million, despite fewer deals (25 against 30). It made up 67 per cent of all capital raised and was the only stage to grow.\n\nEarly-stage funding (Series A and B) fell 33 per cent to USD 668 million across 52 rounds, from USD 1 billion across 82 rounds. Seed funding dropped 57 per cent to USD 73.8 million across 76 rounds, from USD 173 million across 148 rounds.\n\nThe number of companies raising funds for the first time nearly halved to 30 from 59, the report said. Existing investors in the sector fell to 125 from 192, and first-time investors fell to 33 from 48.\n\nBy segment, digital lending attracted the most funding at USD 809 million, followed by payments at USD 776 million and investment tech at USD 450 million.\n\nBengaluru's share of fintech funding rose to 62 per cent (USD 1.4 billion) from 52 per cent a year earlier. Mumbai followed with 24 per cent and Gurugram with 7 per cent.\n\nThe sector produced three new unicorns, startups valued at USD 1 billion or more: Square Yards, KreditBee and Neo Group, compared with two a year earlier.\n\nThere were three initial public offerings, up from two. They were led by Augmont, which had a market capitalisation of USD 757 million at its IPO in August, followed by Turtlemint (USD 471 million, June) and Kissht (USD 305 million, May).\n\nAcquisitions fell 45 per cent to 11 from 20. The largest was Indiabulls Group's USD 110 million purchase of Fintech Cloud, followed by Oxyzo's acquisition of GoldenPi for USD 4.4 million and Choice's purchase of Fintoo for USD 1.1 million.",
+  "categories": [
+    "fintech",
+    "funding"
+  ],
+  "category": "fintech",
+  "companies": [
+    "Tracxn",
+    "CRED",
+    "Meta",
+    "KreditBee",
+    "Weaver",
+    "Slice's USD 100 million Series",
+    "Neo Group",
+    "Augmont",
+    "Indiabulls Group's",
+    "GoldenPi",
+    "Choice"
+  ],
   "funding": {
     "amount": "2.2 billion",
     "currency": "USD",
@@ -23,12 +39,7 @@
     "Gurugram"
   ],
   "people": [
-    "Tracxn. Indian",
-    "Tracxn. Funding",
-    "August. Late-stage",
     "Square Yards",
-    "Neo Group",
-    "Indiabulls Group",
     "Fintech Cloud"
   ],
   "published_at": "2026-10-13T04:49:45Z",

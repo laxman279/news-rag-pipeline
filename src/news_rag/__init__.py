@@ -4,5 +4,7 @@ __all__ = [
     "chunking",
     "models",
     "planning",
+    "tracing",
     "url_utils",
 ]
+
