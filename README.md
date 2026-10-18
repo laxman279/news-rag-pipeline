@@ -27,29 +27,7 @@ cp .env.example .env
 
 > **Note on API Keys:** `GEMINI_API_KEY` is completely optional. Without a key, the pipeline runs deterministically with full source citations. With a key added to `.env` or passed via `--api-key`, Gemini provides an LLM-synthesized answer.
 
----
-
-### 2. Quick Evaluation (Instant Testing)
-
-Index the pre-extracted articles and test queries:
-
-```bash
-# Index records into ChromaDB
-python index.py
-
-# Query the corpus
-python query.py "List all articles mentioning Bengaluru"
-
-# Run the automated sample evaluation suite
-python query.py --run-samples
-
-# Run the complete unit test suite
-pytest
-```
-
----
-
-### 3. Full Pipeline from Scratch (Scraping & Extraction)
+### 2. Full Pipeline from Scratch (Scraping & Extraction)
 
 If you wish to test live scraping and parsing end-to-end:
 
