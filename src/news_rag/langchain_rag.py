@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+import re
 from datetime import datetime, timezone
 from typing import Any
 
 from config import settings
+from src.news_rag.chunking import Chunk
+from src.news_rag.models import ParsedNewsQuery
 from src.news_rag.planning import QueryPlan, chroma_where
 from src.news_rag.tracing import traceable
 
@@ -117,21 +120,365 @@ def build_rag_chain(
     return prompt | llm | StrOutputParser()
 
 
+def build_rag_context(
+    articles: dict[str, list[Chunk]],
+    target_article_count: int | None = None,
+) -> str:
+    """Adaptively pack context chunks into formatted XML article blocks."""
+    if not articles:
+        return ""
+
+    effective_count = target_article_count if target_article_count is not None else len(articles)
+    is_compact = effective_count > 5
+
+    article_blocks = []
+    for idx, (aid, chunks) in enumerate(articles.items(), start=1):
+        if not chunks:
+            continue
+
+        meta = chunks[0].metadata if isinstance(chunks[0].metadata, dict) else {}
+        title = str(meta.get("title") or "Untitled").strip()
+        pub_date = str(meta.get("published_date") or meta.get("published_at") or "").strip()
+        url = str(meta.get("url") or "").strip()
+        raw_cats = meta.get("categories") or meta.get("category") or []
+        if isinstance(raw_cats, list):
+            cats_str = ", ".join(str(c) for c in raw_cats if c)
+        else:
+            cats_str = str(raw_cats)
+
+        if is_compact:
+            top_chunk = max(chunks, key=lambda c: getattr(c, "score", 0.0) or 0.0)
+            content_text = top_chunk.text.strip()
+        else:
+            top_3_chunks = sorted(
+                chunks,
+                key=lambda c: getattr(c, "score", 0.0) or 0.0,
+                reverse=True,
+            )[:3]
+            sorted_chunks = sorted(
+                top_3_chunks,
+                key=lambda c: int(c.metadata.get("chunk_index", 0) if isinstance(c.metadata, dict) else 0),
+            )
+            content_text = "\n\n".join(c.text.strip() for c in sorted_chunks)
+
+        block = (
+            f'<article index="{idx}" id="{aid}">\n'
+            f"  <header>\n"
+            f"    <title>{title}</title>\n"
+            f"    <published_date>{pub_date}</published_date>\n"
+            f"    <url>{url}</url>\n"
+            f"    <categories>{cats_str}</categories>\n"
+            f"  </header>\n"
+            f"  <content>\n"
+            f"{content_text}\n"
+            f"  </content>\n"
+            f"</article>"
+        )
+        article_blocks.append(block)
+
+    return "\n\n".join(article_blocks)
+
+
+def _fallback_parse_query(raw_query: str) -> ParsedNewsQuery:
+    """Deterministic regex-based fallback query parser."""
+    count = 5
+    count_match = re.search(
+        r"\b(?:top\s+|first\s+|show\s+(?:me\s+)?|get\s+|find\s+)?(\d+)\s*(?:news\s+)?articles?\b",
+        raw_query,
+        flags=re.IGNORECASE,
+    )
+    if not count_match:
+        count_match = re.search(r"\barticles?\b.*?(\d+)", raw_query, flags=re.IGNORECASE)
+    if count_match:
+        try:
+            count = int(count_match.group(1))
+        except (ValueError, TypeError):
+            count = 5
+
+    known_categories = [
+        "artificial intelligence",
+        "generative ai",
+        "genai",
+        "ai",
+        "funding",
+        "startups",
+        "product launch",
+        "policy",
+        "m&a",
+        "mergers and acquisitions",
+        "layoffs",
+        "earnings",
+        "fintech",
+        "semiconductors",
+        "cybersecurity",
+        "enterprise tech",
+        "technology",
+    ]
+    category = None
+    lowered = f" {raw_query.lower()} "
+    for cat in known_categories:
+        pattern = rf"(?:\b|\s){re.escape(cat)}(?:\b|\s)"
+        if re.search(pattern, lowered):
+            if cat in {"artificial intelligence", "generative ai", "genai", "ai"}:
+                category = "ai"
+            elif cat in {"mergers and acquisitions", "m&a"}:
+                category = "m&a"
+            else:
+                category = cat.lower()
+            break
+
+    cleaned = re.sub(
+        r"\b(?:tell\s+me\s+about|show\s+me|find|list|get|give\s+me)\b",
+        "",
+        raw_query,
+        flags=re.IGNORECASE,
+    )
+    cleaned = re.sub(
+        r"\b(?:top\s+|first\s+)?\d+\s*(?:news\s+)?articles?\b",
+        "",
+        cleaned,
+        flags=re.IGNORECASE,
+    )
+    cleaned = re.sub(
+        r"\b(?:that\s+mentioned|mentioning|covering|about|related\s+to)\b",
+        "",
+        cleaned,
+        flags=re.IGNORECASE,
+    )
+    cleaned = " ".join(cleaned.split()).strip()
+    if not cleaned:
+        cleaned = raw_query.strip()
+
+    return ParsedNewsQuery(
+        semantic_query=cleaned,
+        category_filter=category,
+        target_article_count=count,
+    )
+
+
+@traceable(name="parse_user_query", run_type="parser", tags=["querying"])
+def parse_user_query(
+    raw_query: str,
+    model: str | None = None,
+    api_key: str | None = None,
+    llm: Any = None,
+) -> ParsedNewsQuery:
+    """Parse user query into structured search parameters using Gemini or fallback."""
+    active_key = settings.get_api_key(api_key)
+    if llm is None and active_key:
+        try:
+            llm = get_llm(model=model, api_key=active_key)
+        except Exception:
+            llm = None
+
+    if llm is not None:
+        try:
+            structured_llm = llm.with_structured_output(ParsedNewsQuery)
+            prompt = (
+                "You are an expert news search query parser. Extract structured search parameters from the query:\n"
+                "- semantic_query: The core topic or search subject stripped of article count requests and filter syntax.\n"
+                "- category_filter: Normalized lowercase category or topic tag if explicitly requested "
+                "(e.g., 'ai', 'funding', 'fintech', 'semiconductors', 'policy', 'layoffs', 'm&a'), or null if unspecified.\n"
+                "- target_article_count: The number of distinct articles requested by the user (integer between 1 and 25, default 5).\n\n"
+                f"Query: {raw_query}"
+            )
+            result = structured_llm.invoke(prompt)
+            if isinstance(result, ParsedNewsQuery):
+                return result
+            if isinstance(result, dict):
+                return ParsedNewsQuery.model_validate(result)
+        except Exception as exc:
+            print(f"[QueryParser Warning] LLM parsing failed: {exc}. Using fallback parser.", flush=True)
+
+    return _fallback_parse_query(raw_query)
+
+
+def _convert_to_chunk(doc: Any, dist_or_score: Any) -> Chunk:
+    if isinstance(dist_or_score, (int, float)):
+        val = float(dist_or_score)
+        score = max(0.0, 1.0 - val) if 0.0 <= val <= 2.0 else val
+    else:
+        score = 0.0
+
+    if hasattr(doc, "page_content"):
+        content = doc.page_content
+        metadata = dict(getattr(doc, "metadata", {}) or {})
+        cid = getattr(doc, "id", None) or str(metadata.get("chunk_id", ""))
+    elif isinstance(doc, dict):
+        content = str(doc.get("text") or doc.get("page_content") or "")
+        metadata = dict(doc.get("metadata") or {})
+        cid = str(doc.get("id") or metadata.get("chunk_id") or "")
+    else:
+        content = str(doc)
+        metadata = {}
+        cid = ""
+
+    aid = str(metadata.get("article_id") or metadata.get("id") or "")
+    c_idx = metadata.get("chunk_index", 0)
+    if not cid:
+        cid = f"{aid}_chunk_{c_idx}" if aid else f"chunk_{id(doc)}"
+
+    return Chunk(id=cid, text=content, metadata=metadata, score=score)
+
+
+def _fetch_from_vectorstore(
+    vstore: Any,
+    query: str,
+    k: int,
+    category_filter: str | None = None,
+) -> list[Chunk]:
+    filter_dict = None
+    if category_filter:
+        filter_dict = {"categories": {"$contains": category_filter.lower()}}
+
+    raw_results = None
+    if filter_dict is not None:
+        try:
+            raw_results = vstore.similarity_search_with_score(
+                query=query,
+                k=k,
+                filter=filter_dict,
+            )
+        except Exception:
+            try:
+                raw_results = vstore.similarity_search_with_score(
+                    query=query,
+                    k=k,
+                    filter={"category": category_filter.lower()},
+                )
+            except Exception:
+                raw_results = None
+
+    if raw_results is None:
+        try:
+            raw_results = vstore.similarity_search_with_score(query=query, k=k)
+        except Exception as exc:
+            print(f"[Vectorstore Error] similarity search failed: {exc}", flush=True)
+            return []
+
+    chunks = []
+    for item in raw_results:
+        if isinstance(item, tuple) and len(item) == 2:
+            d, s = item
+        else:
+            d, s = item, 0.0
+        chunks.append(_convert_to_chunk(d, s))
+
+    chunks.sort(key=lambda c: c.score, reverse=True)
+    return chunks
+
+
+def _group_chunks_by_article(chunks: list[Chunk], limit: int) -> dict[str, list[Chunk]]:
+    grouped: dict[str, list[Chunk]] = {}
+    for chunk in chunks:
+        aid = str(chunk.metadata.get("article_id") or chunk.metadata.get("id") or "")
+        if not aid:
+            continue
+        if aid not in grouped:
+            if len(grouped) >= limit:
+                continue
+            grouped[aid] = []
+        grouped[aid].append(chunk)
+    return grouped
+
+
+@traceable(name="retrieve_unique_articles", run_type="retriever", tags=["querying"])
+def retrieve_unique_articles(
+    parsed_query: ParsedNewsQuery,
+    vectorstore: Any = None,
+) -> dict[str, list[Chunk]]:
+    """Retrieve chunks grouped into target_article_count unique articles."""
+    if vectorstore is None:
+        try:
+            vectorstore = get_vectorstore()
+        except Exception as exc:
+            print(f"[Vectorstore Error] Could not initialize vectorstore: {exc}", flush=True)
+            return {}
+
+    target_count = parsed_query.target_article_count
+    category_filter = parsed_query.category_filter
+    semantic_query = parsed_query.semantic_query or ""
+
+    # Check for Native Grouping support (e.g. Qdrant, Weaviate, Milvus)
+    native_method = getattr(vectorstore, "query_points_groups", None) or getattr(
+        getattr(vectorstore, "_client", None), "query_points_groups", None
+    )
+    if native_method is not None:
+        try:
+            groups_resp = native_method(
+                query=semantic_query,
+                group_by="article_id",
+                group_limit=target_count,
+                group_size=3,
+                filter=category_filter,
+            )
+            if groups_resp:
+                native_dict: dict[str, list[Chunk]] = {}
+                for g in groups_resp:
+                    aid = getattr(g, "id", None) or str(g.get("id", ""))
+                    points = getattr(g, "hits", None) or g.get("hits", [])
+                    native_dict[aid] = [
+                        _convert_to_chunk(p, getattr(p, "score", 0.0)) for p in points
+                    ]
+                if len(native_dict) >= target_count or not category_filter:
+                    return native_dict
+        except Exception as exc:
+            print(f"[Vectorstore Info] Native grouping query failed: {exc}. Using iterative fallback.", flush=True)
+
+    # Fallback (Iterative Over-Fetch & Deduplicate):
+    # Step 1: Pre-filter by category_filter if present (fetch k = target_count * 5)
+    grouped: dict[str, list[Chunk]] = {}
+    if category_filter:
+        chunks = _fetch_from_vectorstore(
+            vectorstore,
+            query=semantic_query,
+            k=target_count * 5,
+            category_filter=category_filter,
+        )
+        grouped = _group_chunks_by_article(chunks, limit=target_count)
+
+    # Fallback to unfiltered search if strict filtering returned fewer than target_count results
+    if len(grouped) < target_count:
+        unfiltered_chunks = _fetch_from_vectorstore(
+            vectorstore,
+            query=semantic_query,
+            k=target_count * 5,
+            category_filter=None,
+        )
+        grouped = _group_chunks_by_article(unfiltered_chunks, limit=target_count)
+
+    # If still fewer than target_count, perform up to one pagination/expansion step (k = target_count * 10)
+    if len(grouped) < target_count:
+        expanded_chunks = _fetch_from_vectorstore(
+            vectorstore,
+            query=semantic_query,
+            k=target_count * 10,
+            category_filter=None,
+        )
+        grouped = _group_chunks_by_article(expanded_chunks, limit=target_count)
+
+    return grouped
+
+
 @traceable(name="langchain_generate_answer", run_type="chain", tags=["querying"])
 def langchain_generate_answer(
     question: str,
-    contexts: list[dict[str, Any]],
+    contexts: list[dict[str, Any]] | dict[str, list[Chunk]],
     model: str | None = None,
     api_key: str | None = None,
     plan: QueryPlan | None = None,
+    target_article_count: int | None = None,
 ) -> str | None:
     """Generate an answer using the LangChain LCEL RAG chain with Gemini."""
     if not contexts:
         return None
 
-    is_large_context = len(contexts) > 5
-    max_chars = 1200 if is_large_context else 2500
-    context_str = format_context_chunks(contexts, max_chars_per_chunk=max_chars)
+    if isinstance(contexts, dict):
+        context_str = build_rag_context(contexts, target_article_count=target_article_count)
+    else:
+        is_large_context = len(contexts) > 5
+        max_chars = 1200 if is_large_context else 2500
+        context_str = format_context_chunks(contexts, max_chars_per_chunk=max_chars)
 
     try:
         chain = build_rag_chain(model=model, api_key=api_key, plan=plan)
@@ -140,6 +487,7 @@ def langchain_generate_answer(
     except Exception as exc:
         print(f"[Gemini Error] Generation failed: {exc}", flush=True)
         return None
+
 
 
 

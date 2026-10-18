@@ -852,7 +852,7 @@ def extract_article(
                 companies.append(inv)
 
     return ArticleRecord(
-        id=str(manifest_row["id"]),
+        id=str(manifest_row.get("article_id") or manifest_row["id"]),
         url=str(manifest_row["url"]),
         title=str(title).strip(),
         author=author or "",

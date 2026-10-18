@@ -1,0 +1,34 @@
+{
+  "author": [
+    "Reuters"
+  ],
+  "body": "The cost of insuring against US tech defaults has hit record levels in the latest sign of credit stress building in the AI trade, especially for data centres dependent on future revenue.\n\nFive-year credit default swap spreads at cloud computing giant Oracle widened by 26 basis points overnight to a record 288 bps, according S&P Global Market Intelligence.\n\nFive-year spreads for AI investor SoftBank widened 24 bps to 424 bps. For data-centre operator CoreWeave they have blown out past 1000 bps, according to LSEG data .",
+  "categories": [
+    "enterprise tech",
+    "AI",
+    "funding"
+  ],
+  "category": "enterprise tech",
+  "companies": [
+    "cloud computing giant",
+    "Oracle",
+    "SoftBank",
+    "CoreWeave"
+  ],
+  "funding": {
+    "amount": null,
+    "currency": null,
+    "investors": [
+      "SoftBank"
+    ],
+    "round": null,
+    "startup": "CoreWeave"
+  },
+  "id": "4461dc4bce5bbbaa",
+  "locations": [],
+  "people": [],
+  "published_at": "2026-10-15T05:17:16Z",
+  "summary": "The cost of insuring against US tech defaults has hit record levels in the latest sign of credit stress building in the AI trade, especially for data centres dependent on future revenue. Five-year credit default swap spreads at cloud computing giant Oracle widened by 26 basis points overnight to a record 288 bps, according S&P Global Market Intelligence. Five-year spreads for AI investor SoftBank widened 24 bps to 424 bps.",
+  "title": "AI credit default swap spreads widen sharply",
+  "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/ai-credit-default-swap-spreads-widen-sharply/articleshow/134958105.cms"
+}

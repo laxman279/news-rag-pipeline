@@ -1,0 +1,35 @@
+{
+  "author": [
+    "PTI"
+  ],
+  "body": "Low-cost jobs, especially the outsourced ones, are likely to be overtaken by artificial intelligence, a top official of global HR tech major Workday said after the company unveiled a new AI platform, Sana, to automate human resources and finance functions.\n\nWorkday Chairman and Chief Executive Officer Aneel Bhusri told reporters at the Workday Rising Summit that AI will not lead to jobs moving out of the US or first-world countries, but may do the opposite.\n\n\"I worry that the low-cost jobs are the ones that are going to get replaced by AI. It's not about cost, it's about productivity. It's about people that are at the cutting edge of whatever discipline they're in. It doesn't matter where they live. But a lot of the low-level automation jobs that have been outsourced- that's where I worry the most, to be honest,\" he said.\n\nBhusri was replying to a question about the impact of process calibration tools in Workday's Sana platform, which shows cost calibration between the human workforce and AI-enabled automation.\n\nWorkday has around 11,500 large enterprise customers. It has around 1,800 clients in India, which include companies like Genpact and Flipkart.\n\nAccording to Gartner, Workday is the world's leading human capital management (HCM) software vendor by revenue and market share. In 2025, the global HCM market reached USD 40.8 billion, growing 13.4 per cent year-over-year, with the top five vendors controlling 52 per cent of total market revenue.\n\nWorkday's new platform Sana has come up with tools to automate human resource and finance functions for enterprises by building their agents. The agents are AI tools that organisations can design to perform required functions, such as implementing company payroll policy, automatically assigning or reassigning shifts to employees, and managing logistics, leave, etc.\n\nSana will work within the AI tools and platforms employees already use, including Claude, Google Cloud's Gemini Enterprise, Microsoft Copilot and Teams, and Slack, building on the self-service capabilities available today.\n\nWorkday and Anthropic have collaborated to connect their platforms and agentic experiences. The partnership brings Claude's frontier reasoning together with Sana AI agents and Workday's trusted data and business context in HR and finance.\n\nBhusri said that Workday sees that AI should augment humans, not replace them.\n\n\"Jobs are being redefined into skills and roles that are very different from what they were pre-AI. Let's embrace that. Roles and jobs are going to change, and we have to be thoughtful and responsible about that in our companies. At the end of the day, we are where humans and agents work side by side. That is the world we're already living in now, and that's the world of the future,\" he said.\n\nAs part of a new transition, Workday has announced new AI agents that work as autopilots across hiring, payroll, accounting, and compliance which can help in reducing decision making time.\n\nThe company has announced the acquisition of C1.ai, an agentic identity platform that identifies agents, people, and other entities that can access organisations' systems.\n\nC1.ai manages the rights of agents and people to access business firms' systems based on their authorisation.\n\nTo ensure safety, some agents act on behalf of an employee and should only have access to what that person can, while others work independently with broader access that needs close oversight.\n\n\"With C1.ai, we'll help secure that workforce by managing and enforcing exactly who ' and what ' has access to connected apps and systems, giving each person and agent the right access at the right moment to make work easier, safer, and more compliant,\" Workday president, product and technology, Gerrit Kazmaier said.\n\nThe company has also rolled out the Workday Decision Intelligence platform across its HR and finance portfolio. Using the platform, teams in an organisation can ask a question in plain language, get an answer grounded in live data instead of a static export, compare options, and take action based on existing Workday permissions.",
+  "categories": [
+    "AI",
+    "enterprise tech"
+  ],
+  "category": "AI",
+  "companies": [
+    "Workday",
+    "Genpact",
+    "Flipkart",
+    "Gartner",
+    "Google Cloud",
+    "Microsoft Copilot",
+    "Slack",
+    "Sana"
+  ],
+  "funding": null,
+  "id": "47c6b84224e338ed",
+  "locations": [
+    "India"
+  ],
+  "people": [
+    "top official",
+    "Aneel Bhusri",
+    "Gerrit Kazmaier"
+  ],
+  "published_at": "2026-10-16T06:15:54Z",
+  "summary": "Low-cost jobs, especially the outsourced ones, are likely to be overtaken by artificial intelligence, a top official of global HR tech major Workday said after the company unveiled a new AI platform, Sana, to automate human resources and finance functions. Workday Chairman and Chief Executive Officer Aneel Bhusri told reporters at the Workday Rising Summit that AI will not lead to jobs moving out of the US or first-world countries, but may do the opposite. \"I worry that the low-cost jobs are the ones that are going to get replaced by AI.",
+  "title": "Low-cost jobs will be taken over by AI, most worried about outsourced ones: Workday CEO",
+  "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/low-cost-jobs-will-be-taken-over-by-ai-most-worried-about-outsourced-ones-says-workday-chief/articleshow/134982288.cms"
+}

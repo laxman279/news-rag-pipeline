@@ -127,7 +127,7 @@ def plan_query(
         company = company_match.group(1)
 
     mention_match = re.search(
-        r"\bmention(?:ing|s|ed)?\s+(.+?)(?:\?|$)", question, flags=re.IGNORECASE
+        r"\bmention(?:ing|s|ed)?\s+([^.?!;\n]+)", question, flags=re.IGNORECASE
     )
     if mention_match and not location:
         raw_target = mention_match.group(1).strip().strip("\"'").rstrip(".,!?")
@@ -137,13 +137,20 @@ def plan_query(
     mentioned_terms: tuple[str, ...] = ()
     if mention_match and not location:
         raw_terms = mention_match.group(1).strip().strip("\"'")
-        stop_terms = {"the", "a", "an", "article", "articles", "news", "tech"}
+        stop_terms = {
+            "the", "a", "an", "and", "article", "articles", "news", "tech",
+            "tell", "line", "lines", "about", "each", "every", "one", "show", "give", "list",
+            "brief", "briefly", "short", "summary", "summarize", "detail", "details",
+        }
         terms = [
-            term.lower()
-            for term in re.findall(r"[A-Za-z0-9&.-]+", raw_terms)
-            if len(term) > 2 and term.lower() not in stop_terms
+            t.lower().strip(".,;:?!'\"-")
+            for t in re.findall(r"[A-Za-z0-9]+(?:[-&][A-Za-z0-9]+)*", raw_terms)
         ]
-        mentioned_terms = tuple(dict.fromkeys(terms))
+        mentioned_terms = tuple(
+            dict.fromkeys(
+                term for term in terms if len(term) > 2 and term not in stop_terms
+            )
+        )
 
     # Extract explicitly requested quantity (e.g. "tell 10 news", "top 5 startups", "list 7 articles")
     limit = None

@@ -13,6 +13,8 @@ class Chunk:
     id: str
     text: str
     metadata: dict[str, object]
+    score: float = 0.0
+
 
 
 def split_text(

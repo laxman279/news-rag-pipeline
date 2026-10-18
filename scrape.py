@@ -13,7 +13,7 @@ from bs4 import BeautifulSoup
 from requests.adapters import HTTPAdapter
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 from urllib3.util.retry import Retry
-
+ 
 from config import settings
 from src.news_rag.tracing import traceable
 from src.news_rag.url_utils import article_id, canonicalize_url, looks_like_et_tech_article
@@ -163,6 +163,7 @@ def scrape(limit: int | None = None) -> None:
                 aid,
                 {
                     "id": aid,
+                    "article_id": aid,
                     "url": canonical,
                     "fetched_at": datetime.fromtimestamp(
                         output_path.stat().st_mtime, timezone.utc
@@ -180,6 +181,7 @@ def scrape(limit: int | None = None) -> None:
             output_path.write_text(response.text, encoding=response.encoding or "utf-8")
             manifest[aid] = {
                 "id": aid,
+                "article_id": aid,
                 "url": canonical,
                 "fetched_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
                 "http_status": response.status_code,

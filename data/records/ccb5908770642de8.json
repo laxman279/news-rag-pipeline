@@ -1,0 +1,28 @@
+{
+  "author": [
+    "Bloomberg"
+  ],
+  "body": "DeepSeek released an update of its AI model this weekend that it says is faster and leaner, ramping up the Chinese company’s challenge to Silicon Valley rivals Anthropic PBC and OpenAI as well as domestic competitors like Moonshot Kimi and Z.ai\n\nThe firm unveiled the V4.1-Flash-1017 late Saturday afternoon with a series of posts on X saying the update had “stronger benchmark performance, faster task completion, and shorter outputs than the previous version.” The model is live across the web, on DeepSeek’s app and its platform for developers.\n\nThe rapid pace of DeepSeek’s new launches underscores the intensifying contest between China’s open-weight models and the proprietary models of their US counterparts, which are top performers, but with far higher costs.\n\nDeepSeek’s latest iteration delivers “substantial improvements across reasoning, coding, agentic tasks, and visual benchmarks,” the Hangzhou-based startup said in its technical report on Hugging Face, the online platform for AI models, data sets and apps.\n\nThe model released Saturday improves capabilities in uses ranging from game creation to 3D modeling. The company described the DeepSeek-V4.1-Flash-1017 as a minor update to its earlier V4.1-Flash.\n\nEarlier this week, DeepSeek suffered an outage of about five hours, leaving its servers unreachable. Some experts attributed the glitch to a lack of sufficient computing resources. Slowdowns and service disruptions have increased in recent months for DeepSeek, whose aggressively priced AI models are sought after by developers, putting pressure on its services.\n\nSaturday’s model update was preceded by the slimmed down V4.1-Flash AI system, unveiled early in September. DeepSeek offered it at such a steep discount that shares of rivals such as MiniMax Group Inc., Z.ai and even the giant Alibaba Group Holding Ltd., which is driving its Qwen models, plummeted on the Hong Kong stock exchange.\n\nThe latest update seeks to be a stronger, faster and more compact version of its predecessor.\n\nDeepSeek disclosed benchmarking scores for its latest update on X. On Humanity’s Last Exam, the revised model scored 36.8 to 42.6, an improvement on V4.1-Flash, which scored 36.8 to 39.1. HLE, as it’s known, measures how AI models perform on thousands of questions in math, sciences and humanities.",
+  "categories": [
+    "product launch",
+    "AI"
+  ],
+  "category": "product launch",
+  "companies": [
+    "DeepSeek",
+    "Anthropic PBC",
+    "OpenAI",
+    "Moonshot Kimi",
+    "DeepSeek-V4",
+    "MiniMax Group",
+    "Alibaba Group Holding"
+  ],
+  "funding": null,
+  "id": "ccb5908770642de8",
+  "locations": [],
+  "people": [],
+  "published_at": "2026-10-17T16:23:21Z",
+  "summary": "DeepSeek released an update of its AI model this weekend that it says is faster and leaner, ramping up the Chinese company’s challenge to Silicon Valley rivals Anthropic PBC and OpenAI as well as domestic competitors like Moonshot Kimi and Z.ai\n\nThe firm unveiled the V4.1-Flash-1017 late Saturday afternoon with a series of posts on X saying the update had “stronger benchmark performance, faster task completion, and shorter outputs than the previous version.” The model is live across the web, on DeepSeek’s app and its platform for developers. The rapid pace of DeepSeek’s new launches underscores the intensifying contest between China’s open-weight models and the proprietary models of their US counterparts, which are top performers, but with far higher costs. DeepSeek’s latest iteration delivers “substantial improvements across reasoning, coding, agentic tasks, and visual benchmarks,” the Hangzhou-based startup said in its technical report on Hugging Face, the online platform for AI models, data sets and apps.",
+  "title": "DeepSeek pushes out updated AI model it says is faster, leaner",
+  "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/deepseek-pushes-out-updated-ai-model-it-says-is-faster-leaner/articleshow/135016984.cms"
+}

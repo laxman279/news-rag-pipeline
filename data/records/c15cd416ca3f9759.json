@@ -1,0 +1,36 @@
+{
+  "author": [
+    "Reuters"
+  ],
+  "body": "Anthropic's third-quarter revenue rose 45% to $16.8 billion from the previous quarter, according to an investor who attended a pre-IPO meeting with Anthropic leadership in San Francisco on Wednesday.\n\nRevenue in the first quarter was $4.7 billion, and $11.6 billion in the second quarter, according to the person who attended the investor day meant to familiarize prospective Anthropic investors before its highly anticipated IPO. The company was profitable on an adjusted basis in the third quarter, Anthropic told the group, the source said.\n\nAlso Read: Anthropic targets more than $2 trillion valuation in closely watched IPO despite $42 billion 2025 loss\n\nAnthropic did not immediately respond to an email seeking comment.\n\nThe IPO is expected to precede a public listing by rival OpenAI, making Anthropic an early test of investor appetite for heavily unprofitable AI developers pursuing massive scale. Its public-market debut is likely to be pushed until after the November US midterm elections, Reuters has reported.\n\nScrutiny of AI companies' finances has intensified as they pour money into chips, data centers and computing power needed to develop and operate increasingly powerful models.\n\nTargeting a valuation of over $2 trillion, Anthropic is seeking to convince investors that its breakneck revenue growth can eventually outrun the enormous costs of building and running AI systems.\n\nLast year, Anthropic's revenue increased twelvefold to nearly $4.6 billion, even as the company lost more than $8 billion on an operating basis, excluding writedowns of various liabilities mostly tied to previous fundraising, Reuters reported exclusively last month.\n\nThe company has committed at least $518 billion over a decade for cloud services, computing and infrastructure.\n\nAlso Read: Anthropic warns IPO investors AI could pose 'catastrophic' risks to humanity: Report\n\nFounded by former OpenAI executives, Anthropic has emerged as one of the leading generative AI developers with its Claude family of models. Its expansion has been underpinned by Alphabet's Google and Amazon, which are simultaneously investors, suppliers of computing power and important distribution partners, as well as AI competitors.\n\nAnthropic has also sought to distinguish itself through its focus on AI safety, warning of the dangers posed by increasingly capable systems even as it competes in the race to develop and commercialize more powerful models.\n\nIts research has found that its own AI agents have engaged in troubling behavior in test environments, including leaking sensitive information and sabotaging code, though the company has said it has not seen evidence of such misalignment in real-world deployments.",
+  "categories": [
+    "funding",
+    "earnings",
+    "AI"
+  ],
+  "category": "funding",
+  "companies": [
+    "Anthropic",
+    "AI startup",
+    "OpenAI",
+    "Alphabet",
+    "Google",
+    "Amazon"
+  ],
+  "funding": {
+    "amount": "16.8 billion",
+    "currency": "$",
+    "investors": [],
+    "round": null,
+    "startup": "Anthropic"
+  },
+  "id": "c15cd416ca3f9759",
+  "locations": [],
+  "people": [
+    "former OpenAI executives"
+  ],
+  "published_at": "2026-10-15T00:52:07Z",
+  "summary": "Anthropic's third-quarter revenue rose 45% to $16.8 billion from the previous quarter, according to an investor who attended a pre-IPO meeting with Anthropic leadership in San Francisco on Wednesday. Revenue in the first quarter was $4.7 billion, and $11.6 billion in the second quarter, according to the person who attended the investor day meant to familiarize prospective Anthropic investors before its highly anticipated IPO. The company was profitable on an adjusted basis in the third quarter, Anthropic told the group, the source said.",
+  "title": "Anthropic Q3 revenue surges 45% to $16.8 billion as AI startup gears up for $2 trillion IPO",
+  "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/anthropic-q3-revenue-surges-45-to-16-8-billion-as-ai-startup-gears-up-for-2-trillion-ipo/articleshow/134956776.cms"
+}

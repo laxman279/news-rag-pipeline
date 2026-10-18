@@ -5,10 +5,16 @@ import re
 from pathlib import Path
 
 from config import settings
-from src.news_rag.chunking import chunks_for_record
+from src.news_rag.chunking import Chunk, chunks_for_record
 from src.news_rag.io import load_records
-from src.news_rag.langchain_rag import langchain_chroma_retrieve, langchain_generate_answer
-from src.news_rag.models import ArticleRecord
+from src.news_rag.langchain_rag import (
+    build_rag_context,
+    langchain_chroma_retrieve,
+    langchain_generate_answer,
+    parse_user_query,
+    retrieve_unique_articles,
+)
+from src.news_rag.models import ArticleRecord, ParsedNewsQuery
 from src.news_rag.planning import QueryPlan, plan_query
 from src.news_rag.tracing import traceable
 
@@ -81,13 +87,22 @@ def chunk_matches_plan(text: str, metadata: dict[str, object], plan: QueryPlan) 
 
 
 @traceable(name="chroma_retrieval", run_type="retriever", tags=["querying"])
-def chroma_retrieve(question: str, plan: QueryPlan) -> list[dict[str, object]]:
+def chroma_retrieve(
+    question: str,
+    plan: QueryPlan,
+    parsed_query: ParsedNewsQuery | None = None,
+) -> dict[str, list[Chunk]] | list[dict[str, object]]:
     """Retrieve top relevant chunks from ChromaDB using LangChain vector store."""
     try:
+        if parsed_query is not None:
+            articles = retrieve_unique_articles(parsed_query)
+            if articles:
+                return articles
         return langchain_chroma_retrieve(question, plan, chunk_matches_fn=chunk_matches_plan)
     except Exception as exc:
         print(f"[ChromaDB Error] ChromaDB query failed: {exc}", flush=True)
         return []
+
 
 
 @traceable(name="lexical_retrieval", run_type="retriever", tags=["querying", "fallback"])
@@ -174,14 +189,20 @@ def repeated_investors_answer(records: list[ArticleRecord], plan: QueryPlan) -> 
 @traceable(name="generate_with_gemini", run_type="llm", tags=["querying"])
 def generate_with_gemini(
     question: str,
-    contexts: list[dict[str, object]],
+    contexts: list[dict[str, object]] | dict[str, list[Chunk]],
     model: str | None = None,
     api_key: str | None = None,
     plan: QueryPlan | None = None,
+    target_article_count: int | None = None,
 ) -> str | None:
     """Generate an answer using LangChain LCEL RAG chain (ChatGoogleGenerativeAI) grounded strictly on retrieved chunks."""
     return langchain_generate_answer(
-        question, contexts, model=model, api_key=api_key, plan=plan
+        question,
+        contexts,
+        model=model,
+        api_key=api_key,
+        plan=plan,
+        target_article_count=target_article_count,
     )
 
 
@@ -191,16 +212,29 @@ generate_with_llama3 = generate_with_gemini
 
 def extract_cited_sources(
     llm_answer: str,
-    contexts: list[dict[str, object]],
+    contexts: list[dict[str, object]] | list[Chunk] | dict[str, list[Chunk]],
 ) -> list[str]:
     """Extract URLs of only the sources that the LLM actually cited or referenced in its answer."""
     # If the LLM indicates no answer could be found, return empty list (no sources used)
     if "cannot be found in the corpus" in llm_answer.lower():
         return []
 
+    # Flatten or normalize contexts to a list of dicts with 'metadata'
+    norm_contexts: list[dict[str, Any]] = []
+    if isinstance(contexts, dict):
+        for chunks in contexts.values():
+            if chunks:
+                norm_contexts.append({"metadata": chunks[0].metadata})
+    elif isinstance(contexts, list):
+        for item in contexts:
+            if isinstance(item, Chunk):
+                norm_contexts.append({"metadata": item.metadata})
+            elif isinstance(item, dict):
+                norm_contexts.append(item)
+
     cited_indices = set()
     matches = re.findall(
-        r"(?:\[Source\s*(\d+)\]|\(Source\s*(\d+)\)|\bSource\s*(\d+)\b|\[(\d+)\])",
+        r"(?:\[(?:Source|Article)\s*(\d+)\]|\((?:Source|Article)\s*(\d+)\)|\b(?:Source|Article)\s*(\d+)\b|\[(\d+)\])",
         llm_answer,
         flags=re.IGNORECASE,
     )
@@ -211,13 +245,13 @@ def extract_cited_sources(
 
     cited_urls = []
     for idx in sorted(cited_indices):
-        if 1 <= idx <= len(contexts):
-            url = str((contexts[idx - 1].get("metadata") or {}).get("url", ""))
+        if 1 <= idx <= len(norm_contexts):
+            url = str((norm_contexts[idx - 1].get("metadata") or {}).get("url", ""))
             if url and url not in cited_urls:
                 cited_urls.append(url)
 
     # Also check if any context title is explicitly mentioned in the LLM answer
-    for ctx in contexts:
+    for ctx in norm_contexts:
         meta = ctx.get("metadata") or {}
         title = str(meta.get("title", "")).strip()
         url = str(meta.get("url", ""))
@@ -227,7 +261,7 @@ def extract_cited_sources(
 
     # Fallback: if no specific citation or title was detected in the text, include all context URLs
     if not cited_urls:
-        for ctx in contexts:
+        for ctx in norm_contexts:
             url = str((ctx.get("metadata") or {}).get("url", ""))
             if url and url not in cited_urls:
                 cited_urls.append(url)
@@ -238,32 +272,48 @@ def extract_cited_sources(
 @traceable(name="answer_synthesis", run_type="chain", tags=["querying"])
 def synthesize(
     question: str,
-    contexts: list[dict[str, object]],
+    contexts: list[dict[str, object]] | dict[str, list[Chunk]],
     plan: QueryPlan,
     model: str | None = None,
     api_key: str | None = None,
     retrieval_notice: str | None = None,
+    target_article_count: int | None = None,
 ) -> str:
     prefix = f"{retrieval_notice}\n\n" if retrieval_notice else ""
-    if not contexts or float(contexts[0]["score"]) < plan.low_relevance_threshold:
+    if not contexts:
         return f"{prefix}The answer cannot be found in the corpus.\n\nSources: none"
+
+    if isinstance(contexts, list):
+        first_item = contexts[0]
+        first_score = float(first_item.get("score", 0.0) if isinstance(first_item, dict) else getattr(first_item, "score", 0.0))
+        if first_score < plan.low_relevance_threshold:
+            return f"{prefix}The answer cannot be found in the corpus.\n\nSources: none"
+    elif isinstance(contexts, dict):
+        all_chunks = [c for chunk_list in contexts.values() for c in chunk_list]
+        max_score = max((getattr(c, "score", 0.0) for c in all_chunks), default=0.0)
+        if not all_chunks or max_score < plan.low_relevance_threshold:
+            return f"{prefix}The answer cannot be found in the corpus.\n\nSources: none"
 
     chosen_model = model or getattr(settings, "gemini_model", "gemini-3.8-flash")
     active_key = settings.get_api_key(api_key)
 
     if not active_key:
-        urls = []
-        for ctx in contexts:
-            metadata = ctx.get("metadata") or {}
-            url = str(metadata.get("url", ""))
-            if url and url not in urls:
-                urls.append(url)
+        urls = extract_cited_sources("", contexts)
         source_lines = "\n".join(f"- {url}" for url in sorted(urls)) or "none"
-        return f"{prefix}{extractive_answer(contexts)}\n\nSources:\n{source_lines}"
+        if isinstance(contexts, dict):
+            ctx_list = [{"text": c.text, "metadata": c.metadata} for chunks in contexts.values() for c in chunks]
+        else:
+            ctx_list = contexts
+        return f"{prefix}{extractive_answer(ctx_list)}\n\nSources:\n{source_lines}"
 
     # Generate grounded answer with Gemini via LangChain
     llm_answer = generate_with_gemini(
-        question, contexts, model=chosen_model, api_key=active_key, plan=plan
+        question,
+        contexts,
+        model=chosen_model,
+        api_key=active_key,
+        plan=plan,
+        target_article_count=target_article_count,
     )
     if llm_answer:
         # Extract only the sources that the LLM actually used or cited in its answer
@@ -271,12 +321,7 @@ def synthesize(
         source_lines = "\n".join(f"- {url}" for url in sorted(used_urls)) or "none"
         return f"{prefix}{llm_answer}\n\nSources:\n{source_lines}"
 
-    urls = []
-    for ctx in contexts:
-        metadata = ctx.get("metadata") or {}
-        url = str(metadata.get("url", ""))
-        if url and url not in urls:
-            urls.append(url)
+    urls = extract_cited_sources("", contexts)
     source_lines = "\n".join(f"- {url}" for url in sorted(urls)) or "none"
     return (
         f"{prefix}Error: Unable to generate response with Gemini model '{chosen_model}'. "
@@ -297,11 +342,14 @@ def answer(
     if plan.repeated_investors:
         return repeated_investors_answer(records, plan)
 
+    parsed_query = parse_user_query(question, model=model, api_key=api_key)
+    target_count = parsed_query.target_article_count
+
     retrieval_notice = None
     if plan.direct_records:
         contexts = direct_record_retrieve(records, plan)
     else:
-        contexts = chroma_retrieve(question, plan)
+        contexts = chroma_retrieve(question, plan, parsed_query=parsed_query)
         if not contexts:
             retrieval_notice = (
                 "[Retrieval Notice: ChromaDB vector search was unavailable, returned an error, "
@@ -315,6 +363,7 @@ def answer(
         model=model,
         api_key=api_key,
         retrieval_notice=retrieval_notice,
+        target_article_count=target_count,
     )
 
 

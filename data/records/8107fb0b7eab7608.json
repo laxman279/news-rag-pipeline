@@ -1,0 +1,31 @@
+{
+  "author": [
+    "PTI"
+  ],
+  "body": "New Delhi, The next phase of AI will be about driving outcomes rather than experiments, with firms defining specific problems and measuring how much AI contributes to solving them, OpenAI's head of public policy and strategy for India, Pragya Misra, said on Wednesday.\n\nCiting an example, Misra said online car marketplace Cars24 used OpenAI's models for nearly a million conversation minutes a month through a customer agent that helps sellers list their cars, and it now reports that nearly 12 per cent of its lost sellers are returning because of it.\n\n\"The next phase... for AI is really going to be not experiments but actually driving outcomes,\" Misra said at the Bloomberg New Economy Forum 2026.\n\nShe said it was no longer about just deploying ChatGPT at scale but about going to a company's board and CEO, asking what the hardest problems they were trying to solve were, and working with them to solve those specific problems so that they could report the results to shareholders and investors.\n\n\"It's really something that you can put down in your shareholder report and say, here is how I've been able to move the needle, right from the top,\" she said.\n\nMisra said one of India's leading healthcare companies had been deciding whether to buy a customer relationship management (CRM) system or build its own. About three weeks into a pilot of OpenAI's Codex coding tool, its chief information officer decided to build it in-house.\n\n\"That was costing them close to 80 lakhs of rupees. And they decided to build their CRM solution using Codex with all of their engineers prioritising this for like a week,\" she said.\n\nShe said the company was now using the CRM it built itself, and it is being adopted across the organisation.\n\nMisra said OpenAI's mission was for artificial general intelligence (AGI) to benefit all of humanity, and that requires the cost of serving AI to keep falling. She said Luna, the cheapest of the GPT-5.6 models OpenAI launched alongside Sol and Terra, was almost as cheap to serve as open-source models.\n\n\"We want AI to be as much as we use electricity today, where intelligence should be available really to everyone,\" she said.\n\nMisra said enterprises' concerns centred on accountability, audit trails and where their data sits. To address them, OpenAI offers data residency and local inferencing in India and has made its models available on Amazon Web Services (AWS), she said. PTI",
+  "categories": [
+    "AI",
+    "policy"
+  ],
+  "category": "AI",
+  "companies": [
+    "OpenAI",
+    "Cars24",
+    "healthcare companies",
+    "PTI"
+  ],
+  "funding": null,
+  "id": "8107fb0b7eab7608",
+  "locations": [
+    "Delhi",
+    "India"
+  ],
+  "people": [
+    "Pragya Misra",
+    "chief information officer"
+  ],
+  "published_at": "2026-10-15T02:44:43Z",
+  "summary": "New Delhi, The next phase of AI will be about driving outcomes rather than experiments, with firms defining specific problems and measuring how much AI contributes to solving them, OpenAI's head of public policy and strategy for India, Pragya Misra, said on Wednesday. Citing an example, Misra said online car marketplace Cars24 used OpenAI's models for nearly a million conversation minutes a month through a customer agent that helps sellers list their cars, and it now reports that nearly 12 per cent of its lost sellers are returning because of it. \"The next phase...",
+  "title": "Next phase of AI about driving outcomes, not experiments: OpenAI's Pragya Misra",
+  "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/next-phase-of-ai-about-driving-outcomes-not-experiments-openais-pragya-misra/articleshow/134955737.cms"
+}

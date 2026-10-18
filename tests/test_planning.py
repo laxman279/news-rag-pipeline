@@ -48,6 +48,16 @@ def test_plan_extracts_mentioned_terms() -> None:
     assert plan.direct_records is True
 
 
+def test_plan_handles_multi_sentence_query_with_formatting_instructions() -> None:
+    plan = plan_query(
+        "tell about articles which mention acquisition.tell 1 line about each article."
+    )
+
+    assert plan.mentioned_terms == ("acquisition",)
+    assert plan.category == "M&A"
+    assert plan.direct_records is True
+
+
 def test_plan_resolves_location_aliases_and_prepositions() -> None:
     # Alias normalization
     plan_alias = plan_query("List startups in Bangalore")

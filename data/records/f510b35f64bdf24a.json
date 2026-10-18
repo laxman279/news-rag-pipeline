@@ -1,0 +1,34 @@
+{
+  "author": [
+    "AFP"
+  ],
+  "body": "From the spectre of refrigerator-infecting AI worms to warnings of \"major\" security incidents at the horizon, calls to prioritise safety in the development of artificial intelligence dominated an industry summit Wednesday.\n\nConcerns about AI guardrails have soared after models developed by OpenAI and Anthropic were involved in security incidents during testing, piling on pressure to regulate the technology.\n\nGoogle DeepMind chair Demis Hassabis warned AI capabilities were growing fast, telling the conference in Dublin such instances were \"early warning shots\" fired by systems that \"aren't that powerful yet\".\n\n\"So the incidents aren't that major,\" he said. \"But they could be, looking into next year and the next couple of years, if we don't do more work as an industry and individually as companies and governments on securing these systems,\" Hassabis warned.\n\nNew AI models should likely first be tested in offline \"sandboxes\", after other companies' models escaped the closed environments used to assess their capabilities, he added.\n\n- Milk and worms -\n\nMicrosoft president Brad Smith called for regulation saying industry and governments must \"act with urgency\" to create \"real and effective safety standards\" to contain the risks linked to artificial intelligence.\n\n\"There are more safety rules for a carton of milk than for AI. There are more safety rules for your oven than for AI,\" he told the conference.\n\n\"We need to recognise that the power of AI has moved faster than the safety for it. Safety needs to catch up. And we're going to need some new AI safety laws and rules.\"\n\nAI agents should be equipped with \"safety brakes\" that users could activate in the event of an incident and AI providers should face mandatory incident-reporting obligations, he said.\n\nHighlighting worries about the technology, Smith pointed to a recent Anthropic report suggesting small AI models may be only months away from behaving like computer worms, copying themselves from one internet-connected device to the next.\n\nAs tech companies race to build ever more powerful AI directly into phones, laptops, cars and household devices rather than running it in distant data centres, Anthropic said such AI might eventually autonomously hop from device to device.\n\n\"I mean, seriously? I don't want AI worms in my refrigerator.\" Smith told the Dublin conference. \"I just don't want any worms of any kind in my refrigerator. And I think most of the public feels that way too.\"\n\n- Speed and control -\n\nA self-replicating AI worm would be hard to stamp out, because there would be no central switch to turn off, Anthropic said.\n\nThe European Union's tech chief, Henna Virkkunen, told the conference AI firms needed to invest more time into testing their systems to retain control over them.\n\n\"The competition is so hard globally that it seems that all the companies, they are not investing enough time and resources really to test their models,\" Virkkunen told reporters upon arrival.\n\n\"They have to be able to control... these systems,\" she said, noting that the European Union has sent information requests to all major AI companies asking what safety and security measures they have in place.\n\nThe European Commission gained new regulatory powers in August under the AI Act, the world's most far-reaching rules to curb potentially dangerous uses of the technology.\n\nBut OpenAI CFO Sarah Friar warned a \"balance\" needed to be struck so that safety rules did not pull the brakes on innovation.\n\n\"We want to be open, we want to make sure the right people can review models, but again we need to make sure that doesn't slow us down to the extent that we then end up behind the folks who are on the malicious side of deployments,\" she said.",
+  "categories": [
+    "AI"
+  ],
+  "category": "AI",
+  "companies": [
+    "OpenAI",
+    "Anthropic",
+    "Google DeepMind",
+    "Microsoft",
+    "tech companies",
+    "European Union",
+    "AI firms",
+    "AI companies",
+    "European Commission"
+  ],
+  "funding": null,
+  "id": "f510b35f64bdf24a",
+  "locations": [],
+  "people": [
+    "Demis Hassabis",
+    "Brad Smith",
+    "Henna Virkkunen",
+    "Sarah Friar"
+  ],
+  "published_at": "2026-10-15T02:49:13Z",
+  "summary": "From the spectre of refrigerator-infecting AI worms to warnings of \"major\" security incidents at the horizon, calls to prioritise safety in the development of artificial intelligence dominated an industry summit Wednesday. Concerns about AI guardrails have soared after models developed by OpenAI and Anthropic were involved in security incidents during testing, piling on pressure to regulate the technology. Google DeepMind chair Demis Hassabis warned AI capabilities were growing fast, telling the conference in Dublin such instances were \"early warning shots\" fired by systems that \"aren't that powerful yet\".",
+  "title": "AI worms, 'major' incident fears spur safety calls at industry summit",
+  "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/ai-worms-major-incident-fears-spur-safety-calls-at-industry-summit/articleshow/134955779.cms"
+}

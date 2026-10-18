@@ -1,0 +1,26 @@
+{
+  "author": [
+    "Reuters"
+  ],
+  "body": "The Financial Stability Board (FSB), a global standard setter, has called for greater human oversight of agentic AI in final guidance for banks and other firms on managing the technology's risks.\n\nThe FSB's guidance, published Thursday, comes as regulators ramp up efforts to contain growing AI risks including the threat of AI-enabled cyber attacks, Reuters reported this week.\n\nIn draft guidance published in June, which it \"strongly encouraged\" boards to refer to, the FSB warned that AI agents - which can plan and execute tasks with limited human oversight - pose distinct challenges for human oversight\n\nPublishing its final guidance, the group said it had strengthened its recommendations on agentic AI, citing feedback on the draft, growing interest among financial institutions in adopting the technology, and the distinct risks and controls it entails\n\nA series of incidents has heightened policymakers' concerns about the potential for AI systems to circumvent safeguards, including an incident in July in which an OpenAI agent escaped a controlled testing environment and hacked AI company Hugging Face\n\nAmong the changes, the FSB now says that in higher-risk use cases, more intensive human oversight will be critical\n\nFirms should set clear, risk-based triggers for when an agent must seek human approval, it added\n\nThe FSB has also removed a guideline that said financial institutions should treat AI as \"synthetic employees\". Instead, firms should recognise that \"AI agents do not reason like humans and may interpret pre-defined goals in unexpected ways.\"",
+  "categories": [
+    "AI"
+  ],
+  "category": "AI",
+  "companies": [
+    "Financial Stability Board",
+    "FSB",
+    "banks",
+    "Reuters",
+    "OpenAI",
+    "Hugging Face"
+  ],
+  "funding": null,
+  "id": "82377ebad5e7f0d0",
+  "locations": [],
+  "people": [],
+  "published_at": "2026-10-15T04:58:09Z",
+  "summary": "The Financial Stability Board (FSB), a global standard setter, has called for greater human oversight of agentic AI in final guidance for banks and other firms on managing the technology's risks. The FSB's guidance, published Thursday, comes as regulators ramp up efforts to contain growing AI risks including the threat of AI-enabled cyber attacks, Reuters reported this week. In draft guidance published in June, which it \"strongly encouraged\" boards to refer to, the FSB warned that AI agents - which can plan and execute tasks with limited human oversight - pose distinct challenges for human oversight\n\nPublishing its final guidance, the group said it had strengthened its recommendations on agentic AI, citing feedback on the draft, growing interest among financial institutions in adopting the technology, and the distinct risks and controls it entails\n\nA series of incidents has heightened policymakers' concerns about the potential for AI systems to circumvent safeguards, including an incident in July in which an OpenAI agent escaped a controlled testing environment and hacked AI company Hugging Face\n\nAmong the changes, the FSB now says that in higher-risk use cases, more intensive human oversight will be critical\n\nFirms should set clear, risk-based triggers for when an agent must seek human approval, it added\n\nThe FSB has also removed a guideline that said financial institutions should treat AI as \"synthetic employees\".",
+  "title": "Global financial watchdog calls for more human oversight of agentic AI",
+  "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/global-financial-watchdog-calls-for-more-human-oversight-of-agentic-ai/articleshow/134957794.cms"
+}

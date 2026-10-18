@@ -2,6 +2,7 @@
 
 __all__ = [
     "chunking",
+    "langchain_rag",
     "models",
     "planning",
     "tracing",

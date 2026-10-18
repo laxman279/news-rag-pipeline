@@ -152,19 +152,70 @@ class ArticleRecord(BaseModel):
                     cleaned.append(norm)
         return cleaned
 
+    @property
+    def published_date(self) -> str:
+        """Article publication timestamp in ISO 8601 format."""
+        return self.published_at
+
     def metadata(self) -> dict[str, Any]:
         dt = datetime.fromisoformat(self.published_at.replace("Z", "+00:00"))
         cats = self.categories if self.categories else [self.category]
+        norm_cats = [c.strip().lower() for c in cats if isinstance(c, str) and c.strip()]
         return {
             "article_id": self.id,
             "url": str(self.url),
             "title": self.title,
+            "published_date": self.published_at,
             "published_at": self.published_at,
             "published_epoch": int(dt.timestamp()),
             "published_yyyymmdd": int(dt.strftime("%Y%m%d")),
             "category": self.category,
-            "categories": ", ".join(cats),
+            "categories": norm_cats,
+            "categories_str": ", ".join(cats),
             "companies": ", ".join(self.companies),
             "locations": ", ".join(self.locations),
             "has_funding": self.funding is not None,
         }
+
+
+class ParsedNewsQuery(BaseModel):
+    """Structured search parameters extracted from a natural language news query."""
+
+    model_config = ConfigDict(extra="ignore")
+
+    semantic_query: str = Field(
+        ...,
+        description="The core topic or semantic search query stripped of count and filter syntax, used for embedding.",
+    )
+    category_filter: str | None = Field(
+        default=None,
+        description="Normalized lowercase category or topic tag if explicitly requested (e.g. 'ai', 'funding', 'fintech'), else None.",
+    )
+    target_article_count: int = Field(
+        default=5,
+        description="The number of distinct articles requested by the user (default: 5, clamped between 1 and 25).",
+    )
+
+    @field_validator("target_article_count", mode="before")
+    @classmethod
+    def clamp_target_article_count(cls, value: Any) -> int:
+        if value is None:
+            return 5
+        try:
+            count = int(value)
+        except (ValueError, TypeError):
+            return 5
+        return max(1, min(25, count))
+
+    @field_validator("category_filter", mode="before")
+    @classmethod
+    def normalize_category_filter(cls, value: Any) -> str | None:
+        if value is None:
+            return None
+        if isinstance(value, str):
+            cleaned = value.strip().lower()
+            if cleaned in {"", "none", "null", "all"}:
+                return None
+            return cleaned
+        return None
+

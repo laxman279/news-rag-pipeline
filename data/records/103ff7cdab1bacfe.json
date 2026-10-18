@@ -1,0 +1,47 @@
+{
+  "author": [
+    "Reuters"
+  ],
+  "body": "Some current Anthropic investors and prospective investors in its upcoming initial public offering are weighing a lower valuation for the AI company after its latest financial disclosures, four people familiar with the matter said, amid broader concerns over the ballooning cost of financing AI.\n\nSome investors who attended Anthropic's investor day on Wednesday in San Francisco discussed a valuation of around $1.5 trillion, three of the people said, a significant step down from the roughly $2 trillion valuation that investors had previously expected for the November share sale.\n\nAt Wednesday's meeting, Anthropic told prospective IPO investors that its third-quarter revenue jumped 45% to $16.8 billion from the previous quarter, and that it was profitable on an adjusted basis during the quarter.\n\nWhile those numbers assuaged some concerns about the massive costs of developing AI systems, some investors were disappointed by the slowing sequential growth rate in the latest quarter, as Anthropic's revenue more than doubled from the first quarter to $11.6 billion in the second quarter, the people added. They spoke on condition of anonymity because they are not authorized to speak publicly on the matter.\n\nAnthropic did not immediately respond to requests for comment.\n\nA cooler reception for Anthropic's IPO could weigh on the wider AI market, whose near-term prospects investors see as hinging largely on the share sale's success, followed by OpenAI's potential listing next year.\n\nBELLWETHER IPO\n\nThe concerns from investors come as a tech selloff is roiling global financial markets and has hurt AI infrastructure companies, chipmakers and so-called neocloud providers that rent computing power for AI broadly. Shares and bonds of Nvidia -backed CoreWeave tumbled on Thursday, reflecting growing investor concern about an AI buildout that is increasingly being financed with borrowed money.\n\nA disappointing share sale for Anthropic could further add to investor worries about the AI buildout.\n\nThe IPO market has suffered some setbacks recently, after data center operator SB Energy decided to delay its listing last month, while nuclear technology company Holtec Nuclear pulled its plans to go public.\n\nDuring Wednesday's meeting at Anthropic's headquarters in San Francisco, attendees, mostly the company's most prominent investors, met with CEO Dario Amodei and finance chief Krishna Rao.\n\nFounded in 2021 by former OpenAI executives including Amodei and his sister Daniela Amodei, who is now Anthropic's president, Anthropic has emerged as one of the leading generative AI developers with its Claude family of models. The company's rapid growth has been underpinned by Alphabet's Google and Amazon, which are simultaneously investors, suppliers of computing power and important distribution partners, as well as AI competitors.\n\nLast year, Anthropic's revenue surged twelvefold to nearly $4.6 billion, even as the company lost more than $8 billion on an operating basis, excluding writedowns of various liabilities mostly tied to previous fundraising, Reuters reported last month. In its IPO prospectus seen exclusively by Reuters in September, Anthropic laid out a vision that AI will transform the global economy more profoundly than industrialization, electricity and the internet, even as it reported a loss of $42 billion in 2025 and projected more spending for the upcoming AI buildout.\n\nThe company has committed to spending at least $518 billion over a decade for cloud services, computing and infrastructure.",
+  "categories": [
+    "funding",
+    "AI"
+  ],
+  "category": "funding",
+  "companies": [
+    "Anthropic",
+    "OpenAI",
+    "Nvidia",
+    "CoreWeave",
+    "SB Energy",
+    "Holtec Nuclear",
+    "Alphabet",
+    "Google",
+    "Amazon",
+    "current Anthropic investors"
+  ],
+  "funding": {
+    "amount": "1.5",
+    "currency": "$",
+    "investors": [
+      "current Anthropic investors",
+      "prospective investors"
+    ],
+    "round": "Initial Public Offering",
+    "startup": "Anthropic"
+  },
+  "id": "103ff7cdab1bacfe",
+  "locations": [],
+  "people": [
+    "prospective investors",
+    "four people",
+    "Dario Amodei",
+    "Krishna Rao",
+    "former OpenAI executives",
+    "Daniela Amodei"
+  ],
+  "published_at": "2026-10-16T02:06:08Z",
+  "summary": "Some current Anthropic investors and prospective investors in its upcoming initial public offering are weighing a lower valuation for the AI company after its latest financial disclosures, four people familiar with the matter said, amid broader concerns over the ballooning cost of financing AI. Some investors who attended Anthropic's investor day on Wednesday in San Francisco discussed a valuation of around $1.5 trillion, three of the people said, a significant step down from the roughly $2 trillion valuation that investors had previously expected for the November share sale. At Wednesday's meeting, Anthropic told prospective IPO investors that its third-quarter revenue jumped 45% to $16.8 billion from the previous quarter, and that it was profitable on an adjusted basis during the quarter.",
+  "title": "Investors temper Anthropic IPO valuation expectations over revenue growth slowdown",
+  "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/investors-temper-anthropic-ipo-valuation-expectations-over-revenue-growth-slowdown/articleshow/134980383.cms"
+}
