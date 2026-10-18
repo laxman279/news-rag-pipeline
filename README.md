@@ -41,14 +41,7 @@ python index.py    # Chunks and indexes records into ChromaDB
 
 To run this pipeline seamlessly on different machines or with different API keys, you can provide your Google Gemini API key in any of the following ways:
 
-1. **`.env` File (Recommended for Local Dev)**:
-   Add your key to `.env`:
-   ```env
-   GEMINI_API_KEY="your-gemini-api-key-here"
-   GEMINI_MODEL="gemini-3.8-flash"  # Optional: defaults to gemini-3.8-flash
-   ```
-
-2. **Environment Variable (Recommended for CI / Remote Machines)**:
+1. **Environment Variable**:
    ```powershell
    # PowerShell
    $env:GEMINI_API_KEY = "your-gemini-api-key-here"
@@ -58,14 +51,12 @@ To run this pipeline seamlessly on different machines or with different API keys
    ```
    *(Note: `GOOGLE_API_KEY` is also supported as an alias).*
 
-3. **Command-Line Argument (Ad-hoc overrides)**:
+2. **Command-Line Argument**:
    ```powershell
    python query.py "What funding rounds happened?" --api-key "your-key"
    python query.py "Explain AI models" --api-key "your-key" --model "gemini-3.8-flash"
    python extract.py --api-key "your-key"
    ```
-
-Never add a real key to `.env.example` or commit `.env`. If a key is exposed, revoke it in Google AI Studio and create a replacement before using the pipeline again.
 
 ## Corpus
 
