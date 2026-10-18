@@ -49,8 +49,6 @@ To run this pipeline seamlessly on different machines or with different API keys
    # Bash / macOS / Linux
    export GEMINI_API_KEY="your-gemini-api-key-here"
    ```
-   *(Note: `GOOGLE_API_KEY` is also supported as an alias).*
-
 2. **Command-Line Argument**:
    ```powershell
    python query.py "What funding rounds happened?" --api-key "your-key"
@@ -94,5 +92,7 @@ LangSmith tracing is integrated across all four stages of the pipeline to monito
 
 ## Known Limitations
 
-extract.py's runtime can be an issue with a larger number of files.A company or person can be named multiple times in different ways that appear on the site. Economic Times page structure can change; a changed structure may cause multiple failures or fewer than `MIN_ARTICLES` permitted URLs.
+extract.py's runtime can be an issue with a larger number of files.
+A company or person can be named multiple times in different ways that appear on the site. 
+Economic Times page structure can change; a changed structure may cause multiple failures or fewer than `MIN_ARTICLES` permitted URLs.
 
