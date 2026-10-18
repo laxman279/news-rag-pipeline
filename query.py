@@ -102,7 +102,7 @@ def lexical_retrieve(question: str, records: list[ArticleRecord], plan: QueryPla
     for record in records:
         if not record_matches(record, plan):
             continue
-        for chunk in chunks_for_record(record, settings.chunk_size_tokens, settings.chunk_overlap_tokens):
+        for chunk in chunks_for_record(record, settings.chunk_size_chars, settings.chunk_overlap_chars):
             score = lexical_score(question, chunk.text)
             if score:
                 rows.append({"text": chunk.text, "metadata": chunk.metadata, "score": score})

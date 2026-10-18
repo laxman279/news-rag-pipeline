@@ -17,7 +17,7 @@ class Chunk:
 
 def split_text(
     text: str,
-    chunk_size: int = 1200,
+    chunk_size: int = 1000,
     overlap: int = 200,
     separators: Sequence[str] | None = None,
 ) -> list[str]:
@@ -45,14 +45,19 @@ def split_text(
 
 
 def chunks_for_record(
-    record: ArticleRecord, chunk_size: int = 1200, overlap: int = 200
+    record: ArticleRecord,
+    chunk_size: int = 1000,
+    overlap: int = 200,
+    prepend_summary: bool = True,
 ) -> list[Chunk]:
     chunks = split_text(record.body, chunk_size=chunk_size, overlap=overlap)
     metadata = record.metadata()
+    summary = (record.summary or "").strip()
+    prefix = f"Summary: {summary}\n\n" if (prepend_summary and summary) else ""
     return [
         Chunk(
             id=f"{record.id}_chunk_{idx}",
-            text=text,
+            text=f"{prefix}{text}",
             metadata={**metadata, "chunk_index": idx},
         )
         for idx, text in enumerate(chunks)

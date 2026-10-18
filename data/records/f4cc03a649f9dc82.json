@@ -10,35 +10,43 @@
   "category": "AI",
   "companies": [
     "SoftBank",
-    "Amazon.com",
-    "Alphabet and Tencent",
-    "Reuters",
-    "SoftBank Investment Advisers",
-    "OpenAI",
-    "MST Financial",
-    "AI-RELATED FUNDRAISING SoftBank",
     "Alphabet",
+    "Tencent",
+    "ChatGPT",
+    "OpenAI",
+    "Nvidia",
+    "T-Mobile US",
+    "Alibaba",
+    "Arm",
+    "Anthropic",
+    "hyperscalers",
+    "Asymmetric Advisors",
+    "Marlborough",
     "SB Energy",
-    "MST"
+    "WeWork",
+    "Son"
   ],
   "funding": {
     "amount": "11 billion",
     "currency": "$",
     "investors": [
-      "Amazon"
+      "SoftBank",
+      "Son"
     ],
-    "round": "Debt"
+    "round": "Junk-Bond Offering",
+    "startup": "ChatGPT"
   },
   "id": "f4cc03a649f9dc82",
   "locations": [],
   "people": [
     "Masayoshi Son",
     "Alex Clavel",
-    "Sam Altman's",
+    "Sam Altman",
+    "MST Financial analyst",
     "David Gibson",
     "Amir Anvarzadeh",
     "James Athey",
-    "Adam Neumann's",
+    "Adam Neumann",
     "Dan Baker"
   ],
   "published_at": "2026-10-14T02:30:24Z",

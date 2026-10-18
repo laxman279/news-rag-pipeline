@@ -9,13 +9,19 @@
   ],
   "category": "semiconductors",
   "companies": [
-    "Huawei",
     "Nvidia",
+    "Huawei",
     "IDC",
     "Reuters",
+    "Alibaba",
+    "T-Head",
     "Cambricon",
     "Baidu",
-    "GPU"
+    "Kunlunxin",
+    "Hygon",
+    "government agencies",
+    "internet companies",
+    "telecoms providers"
   ],
   "funding": null,
   "id": "116d514aae342126",

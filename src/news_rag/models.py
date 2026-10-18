@@ -3,7 +3,77 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Any
 
+import re
+
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_validator
+
+
+_COMPANY_LEGAL_SUFFIX = re.compile(
+    r"(?:[,\s]+)(?:pvt\.?\s+)?(?:private\s+)?(?:limited|ltd\.?|incorporated|inc\.?|corporation|corp\.?|company|co\.?|llc|plc|lp|llp|gmbh|ag|sa|nv|pte\.?|有限責任公司)+\.?$",
+    re.IGNORECASE,
+)
+_COMPANY_NOISE = re.compile(
+    r"\b(?:latest news|news updates?|subscribe now|read more|click here|funding round|ipo|synopsis|the economic times|ettech)\b",
+    re.IGNORECASE,
+)
+_NON_COMPANY_VALUES = {
+    "ai", "artificial intelligence", "genai", "fintech", "deeptech", "startup",
+    "startups", "company", "companies", "the company", "the firm", "the group",
+    "news", "technology", "technology news", "funding", "ipo", "product launch",
+    "retail", "consumer packaged goods", "cpg", "healthcare", "banking",
+    "financial services", "insurance", "financial services and insurance",
+    "telecommunications", "telecom", "automotive", "e-commerce", "ecommerce",
+    "logistics", "real estate", "manufacturing", "education",
+    "return on investment", "roi", "revenue", "profit", "ebitda", "cagr",
+    "market cap", "valuation", "success", "trust", "data", "scale",
+    "intelligence", "personalisation", "personalization", "leadership",
+    "techleadership", "future of commerce", "enterprise", "enterprises",
+    "et spotlight", "et spotlight team", "spotlight", "spotlight team",
+    "agent", "agents", "ai agent", "ai agents",
+}
+
+
+def normalize_company_name(value: str) -> str | None:
+    """Clean obvious extraction noise and normalize legal suffix variants."""
+    if not isinstance(value, str):
+        return None
+    name = re.sub(r"\s+", " ", value).strip(" \t\r\n,;:|\"'`“”‘’()[]{}#")
+    name = re.sub(r"^(?:the|a|an|many|several|all|various|most|some)\s+", "", name, flags=re.IGNORECASE)
+    name = re.sub(r"\s*[-–—]\s*(?:backed|funded|led|owned|driven|focused|centric|based)\b.*$", "", name, flags=re.IGNORECASE)
+    name = re.sub(r"\s+(?:latest news|news updates?|updates|funding round|fundraise|funding|synopsis|now playing)\b.*$", "", name, flags=re.IGNORECASE)
+    name = name.strip(" .,:;-/#")
+    if not name or any(char in name for char in (":", ";", ",", "|", "#", "@")) or re.search(r"\.[a-z]{2,}\b", name, flags=re.IGNORECASE):
+        return None
+    key = re.sub(r"[^a-z0-9]+", " ", name.casefold()).strip()
+    if not name or key in _NON_COMPANY_VALUES or _COMPANY_NOISE.search(name):
+        return None
+    if len(name) < 2 or len(name.split()) > 7 or re.search(r"[.!?].+", name):
+        return None
+    # A legal suffix is not part of the canonical display name; this also makes
+    # variants such as "Google" and "Google LLC" collapse to one entity.
+    name = _COMPANY_LEGAL_SUFFIX.sub("", name).strip(" .,:;-/#")
+    key = re.sub(r"[^a-z0-9]+", " ", name.casefold()).strip()
+    if not name or key in _NON_COMPANY_VALUES:
+        return None
+    return name
+
+
+def deduplicate_companies(values: object) -> list[str]:
+    if isinstance(values, str):
+        values = [values]
+    if not isinstance(values, (list, tuple, set)):
+        return []
+    result: list[str] = []
+    seen: set[str] = set()
+    for value in values:
+        name = normalize_company_name(value) if isinstance(value, str) else None
+        if not name:
+            continue
+        key = re.sub(r"[^a-z0-9]+", " ", name.casefold()).strip()
+        if key not in seen:
+            seen.add(key)
+            result.append(name)
+    return result
 
 
 class Funding(BaseModel):
@@ -11,6 +81,7 @@ class Funding(BaseModel):
     currency: str | None = None
     round: str | None = None
     investors: list[str] = Field(default_factory=list)
+    startup: str | None = None
 
 
 class ArticleRecord(BaseModel):
@@ -29,6 +100,11 @@ class ArticleRecord(BaseModel):
     category: str
     categories: list[str] = Field(default_factory=list)
     funding: Funding | None = None
+
+    @field_validator("companies", mode="before")
+    @classmethod
+    def validate_companies(cls, value: Any) -> list[str]:
+        return deduplicate_companies(value)
 
     @field_validator("published_at")
     @classmethod

@@ -8,14 +8,14 @@
   ],
   "category": "AI",
   "companies": [
-    "White House",
-    "Center for Advancing Innovation and Standards for Super Intelligence",
-    "Commerce Department"
+    "Information"
   ],
   "funding": null,
   "id": "1b30e2f2260b56b2",
   "locations": [],
-  "people": [],
+  "people": [
+    "three senior officials"
+  ],
   "published_at": "2026-10-13T06:59:49Z",
   "summary": "The Trump administration is planning to move three senior officials of the Center for Advancing Innovation and Standards for Super Intelligence to the White House, The Information reported on Monday, citing a White House official. The White House and Commerce Department could not be immediately reached for comment.",
   "title": "Trump administration plans to move AI testing agency officials to White House: The Information",

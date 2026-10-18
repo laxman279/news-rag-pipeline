@@ -4,15 +4,14 @@
   ],
   "body": "TOKYO, - Japan's NTT Data Group, a unit of telecommunications giant NTT, is in the final stages of talks to build a data centre in Osaka, western Japan, for US AI company Anthropic, the Nikkei business daily reported on Tuesday, citing multiple sources.\n\nConstruction costs could reach up to 1 trillion yen ($6.3 billion), report says\n\nTo be first dedicated facility in Japan for Anthropic\n\nData centre would have power intake capacity of up to 500 megawatts, with start of partial operations set for as early as 2028\n\nNTT Data, Anthropic aim to sign agreement by the end of fiscal 2026 ending on March 31\n\nNTT declines comment, NTT Group not immediately available for comment",
   "categories": [
-    "AI",
     "telecom"
   ],
-  "category": "AI",
+  "category": "telecom",
   "companies": [
     "NTT Data",
-    "NTT Data Group",
+    "Anthropic",
     "NTT",
-    "NTT Group"
+    "US AI"
   ],
   "funding": null,
   "id": "c1dbd7c3c2162189",

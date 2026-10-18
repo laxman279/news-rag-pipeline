@@ -13,7 +13,7 @@ from pydantic import ValidationError
 
 from config import settings
 from src.news_rag.io import read_json, write_json
-from src.news_rag.models import ArticleRecord, Funding
+from src.news_rag.models import ArticleRecord, Funding, normalize_company_name
 from src.news_rag.tracing import traceable
 from src.news_rag.url_utils import looks_like_et_tech_article
 
@@ -387,27 +387,23 @@ def category_for(text: str) -> str:
     return cats[0] if cats else "general"
 
 
-_SPACY_NLP: Any = None
+_GLINER_MODEL: Any = None
 
 
-def get_spacy_nlp() -> Any:
-    """Lazily load or initialize the spaCy English model for NER."""
-    global _SPACY_NLP
-    if _SPACY_NLP is not None:
-        return _SPACY_NLP
+def get_gliner_model() -> Any:
+    """Lazily load or initialize the GLiNER model for zero-shot Named Entity Recognition."""
+    global _GLINER_MODEL
+    if _GLINER_MODEL is not None:
+        return _GLINER_MODEL
     try:
-        import spacy
+        from gliner import GLiNER
 
-        try:
-            _SPACY_NLP = spacy.load("en_core_web_sm")
-        except OSError:
-            from spacy.cli import download
-
-            download("en_core_web_sm")
-            _SPACY_NLP = spacy.load("en_core_web_sm")
-    except Exception:
-        _SPACY_NLP = None
-    return _SPACY_NLP
+        model_name = getattr(settings, "gliner_model", "urchade/gliner_small-v2.1")
+        _GLINER_MODEL = GLiNER.from_pretrained(model_name)
+    except Exception as exc:
+        _GLINER_MODEL = None
+        raise RuntimeError("GLiNER not working") from exc
+    return _GLINER_MODEL
 
 
 RELATIONSHIP_MODIFIERS = re.compile(
@@ -423,26 +419,62 @@ NOISE_SUFFIXES = re.compile(
 NON_COMPANY_TERMS = {
     "ai", "genai", "ipo", "fintech", "cxo", "deeptech startups", "technology news",
     "news news", "news", "updates", "latest news updates", "the economic times",
-    "economic times", "synopsis", "the end", "subscribe now", "the technology news news"
+    "economic times", "synopsis", "the end", "subscribe now", "the technology news news",
+    "et spotlight", "spotlight", "etspotlight", "enterprise", "enterprises",
 }
 
 
 def clean_company_name(name: str) -> str | None:
-    """Technique 3: Strip relationship modifiers and noise suffixes from company names."""
+    """Remove common article noise, legal suffixes, and non-entity candidates."""
     cleaned = RELATIONSHIP_MODIFIERS.sub("", name).strip()
     cleaned = NOISE_SUFFIXES.sub("", cleaned).strip()
-
-    # Strip leading "the " if present (e.g. "the AFL-CIO" -> "AFL-CIO")
-    if cleaned.lower().startswith("the ") and len(cleaned) > 4:
-        cleaned = cleaned[4:].strip()
-
-    if cleaned.lower() in NON_COMPANY_TERMS or len(cleaned) < 2:
+    normalized = normalize_company_name(cleaned)
+    if not normalized or normalized.casefold() in NON_COMPANY_TERMS or "spotlight" in normalized.casefold():
         return None
+    return normalized
 
-    return cleaned
+
+def pack_paragraphs_greedy(text: str, max_chars: int = 1000) -> list[str]:
+    """Greedily accumulate paragraphs together until adding the next paragraph would exceed max_chars."""
+    raw_paras = [p.strip() for p in text.split("\n") if p.strip()]
+    paragraphs: list[str] = []
+    for p in raw_paras:
+        while len(p) > max_chars:
+            split_idx = p.rfind(". ", 0, max_chars)
+            if split_idx == -1:
+                split_idx = max_chars
+            else:
+                split_idx += 1
+            paragraphs.append(p[:split_idx].strip())
+            p = p[split_idx:].strip()
+        if p:
+            paragraphs.append(p)
+
+    chunks: list[str] = []
+    current_chunk = ""
+    for para in paragraphs:
+        if not current_chunk:
+            current_chunk = para
+        elif len(current_chunk) + 1 + len(para) <= max_chars:
+            current_chunk = f"{current_chunk}\n{para}"
+        else:
+            chunks.append(current_chunk)
+            current_chunk = para
+    if current_chunk:
+        chunks.append(current_chunk)
+    return chunks
 
 
-def extract_named_items(text: str) -> tuple[list[str], list[str], list[str]]:
+def extract_named_items(
+    text: str,
+    threshold: float = 0.20,
+    model: Any = None,
+) -> tuple[list[str], list[str], list[str]]:
+    if model is None:
+        model = get_gliner_model()
+    if model is None:
+        raise RuntimeError("GLiNER not working")
+
     locations = []
     lowered = text.lower()
     for needle, normalized in LOCATION_ALIASES.items():
@@ -471,25 +503,48 @@ def extract_named_items(text: str) -> tuple[list[str], list[str], list[str]]:
         "ministry", "department", "foundation", "models", "model"
     }
 
-    nlp = get_spacy_nlp()
-    if nlp is not None:
-        doc = nlp(text[:25000])
-        companies: list[str] = []
-        people: list[str] = []
+    # Strip hashtags (e.g. #TechLeadership #ADA) so hashtags are not misidentified as entities
+    cleaned_text = re.sub(r"#\w+", "", text[:25000])
 
-        for ent in doc.ents:
-            cleaned = re.sub(r"\s+", " ", ent.text.strip())
+    # Greedy Packing: accumulate paragraphs together up to 1,000 characters per chunk
+    chunks = pack_paragraphs_greedy(cleaned_text, max_chars=1000)
+
+    companies: list[str] = []
+    people: list[str] = []
+    labels = ["company", "person", "location"]
+
+    if chunks:
+        try:
+            batch_ents = model.batch_predict_entities(chunks, labels, threshold=threshold)
+        except Exception as exc:
+            raise RuntimeError("GLiNER not working") from exc
+        ents = [ent for chunk_ents in batch_ents for ent in chunk_ents]
+    else:
+        ents = []
+
+    for ent in ents:
+            cleaned = re.sub(r"\s+", " ", ent.get("text", "").strip())
+            label = ent.get("label", "").lower()
             clow = cleaned.lower()
+
             if any(noise in clow for noise in stop_noise_substrings) or len(cleaned) < 2:
                 continue
 
-            if ent.label_ == "PERSON":
+            if label == "person":
                 tokens = cleaned.split()
                 while tokens and tokens[0].lower() in stop_titles:
                     tokens = tokens[1:]
                 cleaned_person = " ".join(tokens).strip(" ,.-")
                 person_tokens = cleaned_person.lower().split()
-                # If it contains organization keywords, re-route to companies
+
+                stop_person_tokens = {
+                    "ai", "bot", "bots", "agent", "agents", "model", "models",
+                    "system", "systems", "team", "author", "spotlight", "user",
+                    "users", "enterprise", "enterprises", "interview", "podcast",
+                }
+                if any(t in stop_person_tokens for t in person_tokens):
+                    continue
+
                 if any(t in stop_org_tokens for t in person_tokens):
                     cleaned_org = clean_company_name(cleaned_person)
                     if cleaned_org and cleaned_org not in companies and cleaned_org not in locations:
@@ -505,7 +560,7 @@ def extract_named_items(text: str) -> tuple[list[str], list[str], list[str]]:
                 ):
                     people.append(cleaned_person)
 
-            elif ent.label_ == "ORG":
+            elif label in ("company", "organization"):
                 cleaned_org = clean_company_name(cleaned)
                 if not cleaned_org:
                     continue
@@ -518,140 +573,249 @@ def extract_named_items(text: str) -> tuple[list[str], list[str], list[str]]:
                 ):
                     companies.append(cleaned_org)
 
-            elif ent.label_ in ("GPE", "LOC"):
+            elif label == "location":
                 if clow in LOCATION_ALIASES:
                     norm = LOCATION_ALIASES[clow]
                     if norm not in locations:
                         locations.append(norm)
 
-        return companies[:15], people[:15], locations
-
-    # Fallback heuristic if spaCy is not installed
-    capitalized_phrases = re.findall(
-        r"\b(?:[A-Z][a-z]+)(?:\s+[A-Z][a-z]+){1,3}\b", text
-    )
-    stop = {
-        "The", "A", "An", "India", "Economic Times", "ETtech", "ET Tech",
-        "The End", "Subscribe Now", "Latest News Updates", "Synopsis"
-    }
-    companies = []
-    people = [] 
-    company_keywords = ("Ltd", "Limited", "Inc", "AI", "Tech", "Group", "Sons", "Ventures", "Capital")
-    for phrase in capitalized_phrases[:80]:
-        cleaned = phrase.strip()
-        clow = cleaned.lower()
-        if cleaned in stop or cleaned in locations or any(n in clow for n in stop_noise_substrings):
-            continue
-        if any(token in cleaned for token in company_keywords):
-            cleaned_comp = clean_company_name(cleaned)
-            if cleaned_comp and cleaned_comp not in companies and cleaned_comp not in locations:
-                companies.append(cleaned_comp)
-        elif len(cleaned.split()) >= 2 and cleaned not in people:
-            people.append(cleaned)
     return companies[:15], people[:15], locations
 
 
-def funding_for(text: str, category: str | Sequence[str]) -> Funding | None:
-    is_funding = (
-        "funding" in category
-        if isinstance(category, (list, tuple, set))
-        else category == "funding"
-    )
-    if not is_funding:
+FUNDING_KEYWORD_PATTERN = re.compile(
+    r"\b("
+    r"fund(?:ing|ed|s|raise|raising|raiser|raised)?|"
+    r"rais(?:e|ed|es|ing)|"
+    r"invest(?:ment|ments|or|ors|ed|ing|s)?|"
+    r"series\s+[a-z]|"
+    r"pre-seed|seed|"
+    r"venture(?:\s+capital)?|"
+    r"angel(?:\s+investor|\s+investment)?|"
+    r"valuation|"
+    r"infus(?:ion|e|ed)|"
+    r"capital-raise|"
+    r"equity\s+round"
+    r")\b|"
+    r"(?:\$|Rs\.?|INR|USD|EUR)\s*[\d,.]+|"
+    r"\b[\d,.]+\s*(?:crore|crores|million|billion|mn|bn)\b",
+    re.IGNORECASE,
+)
+
+GLINER_FUNDING_LABELS = [
+    "startup receiving funding",
+    "venture capital or angel investor",
+    "funding round type",
+    "money amount raised",
+]
+
+
+def isolate_funding_paragraphs(text: str) -> list[str]:
+    """Stage 1: Use a regex to isolate only the paragraphs within the webpage that mention funding keywords."""
+    if not text or not text.strip():
+        return []
+
+    # If raw HTML with paragraph/article tags is provided
+    if "<p" in text.lower() or "<article" in text.lower():
+        soup = BeautifulSoup(text, "html.parser")
+        p_tags = [p.get_text(" ", strip=True) for p in soup.find_all("p")]
+        raw_paras = [p for p in p_tags if p and len(p.split()) >= 3]
+        if not raw_paras:
+            raw_paras = [p.strip() for p in re.split(r"\n\s*\n+", text) if p.strip()]
+    else:
+        raw_paras = [p.strip() for p in re.split(r"\n\s*\n+", text) if p.strip()]
+        if len(raw_paras) <= 1:
+            raw_paras = [p.strip() for p in text.splitlines() if p.strip()]
+
+    return [p for p in raw_paras if FUNDING_KEYWORD_PATTERN.search(p)]
+
+
+def extract_funding(
+    text: str,
+    model: Any = None,
+    threshold: float = 0.3,
+) -> Funding | None:
+    """Extract structured funding details using a two-stage approach:
+    Stage 1: Use a regex to isolate only the paragraphs within the webpage that mention funding keywords.
+    Stage 2 (Model Inference): Pass only the relevant 1-3 paragraphs into GLiNER with semantic labels:
+        - 'startup receiving funding'
+        - 'venture capital or angel investor'
+        - 'funding round type'
+        - 'money amount raised'
+    """
+    # Stage 1: Isolate relevant paragraphs using funding regex
+    relevant_paras = isolate_funding_paragraphs(text)[:3]
+    if not relevant_paras:
         return None
-    amount_match = re.search(
-        r"(?P<currency>\$|Rs\.?|INR|USD)\s?(?P<amount>[\d,.]+)\s?(?P<unit>crore|million|billion|mn|m)?",
-        text,
-        flags=re.IGNORECASE,
-    )
-    round_match = re.search(r"\b(seed|pre-seed|series [a-z]|debt)\b", text, flags=re.IGNORECASE)
-    investors_match = re.search(r"(?:from|led by)\s+([^.;]+)", text, flags=re.IGNORECASE)
-    investors = []
-    if investors_match:
-        investors = [part.strip() for part in re.split(r",| and ", investors_match.group(1))[:6]]
+
+    # Stage 2: Model Inference with GLiNER on the relevant 1-3 paragraphs
+    if model is None:
+        model = get_gliner_model()
+    if model is None:
+        raise RuntimeError("GLiNER not working")
+
+    chunks = relevant_paras
+    try:
+        batch_ents = model.batch_predict_entities(chunks, GLINER_FUNDING_LABELS, threshold=threshold)
+    except Exception as exc:
+        raise RuntimeError("GLiNER not working") from exc
+
+    ents: list[dict[str, Any]] = [ent for chunk_ents in batch_ents for ent in chunk_ents]
+
+    startup: str | None = None
+    investors: list[str] = []
+    round_type: str | None = None
+    amount: str | None = None
+    currency: str | None = None
+
+    stop_investor_words = {
+        "investor", "investors", "investment", "investments", "venture capital",
+        "venture", "angel", "angels", "vc", "vcs", "fund", "funds", "firm",
+        "companies", "company", "board", "regulatory filing",
+    }
+
+    for ent in ents:
+        label = ent.get("label", "").lower()
+        raw_val = ent.get("text", "").strip()
+        if not raw_val:
+            continue
+
+        if label == "startup receiving funding":
+            cleaned = clean_company_name(raw_val)
+            if cleaned and cleaned.lower() not in NON_COMPANY_TERMS:
+                if not startup:
+                    startup = cleaned
+
+        elif label == "venture capital or angel investor":
+            cleaned = re.sub(
+                r"^(?:new\s+investors?|investors?|existing\s+investors?)\s+",
+                "",
+                raw_val,
+                flags=re.I,
+            ).strip(" ,.-")
+            cleaned_org = clean_company_name(cleaned) or cleaned
+            clow = cleaned_org.lower()
+            if (
+                cleaned_org
+                and len(cleaned_org) >= 2
+                and clow not in NON_COMPANY_TERMS
+                and clow not in stop_investor_words
+                and (not startup or clow != startup.lower())
+                and cleaned_org not in investors
+            ):
+                investors.append(cleaned_org)
+
+        elif label == "funding round type":
+            if not round_type:
+                series_m = re.search(r"series\s+([a-z])", raw_val, re.I)
+                if series_m:
+                    round_type = f"Series {series_m.group(1).upper()}"
+                elif re.search(r"pre-seed", raw_val, re.I):
+                    round_type = "Pre-Seed"
+                elif re.search(r"seed", raw_val, re.I):
+                    round_type = "Seed"
+                elif re.search(r"debt", raw_val, re.I):
+                    round_type = "Debt"
+                elif re.search(r"growth", raw_val, re.I):
+                    round_type = "Growth"
+                else:
+                    norm = re.sub(r"\b(?:round|funding)\b", "", raw_val, flags=re.I).strip().title()
+                    if norm:
+                        round_type = norm
+
+        elif label == "money amount raised":
+            if not amount:
+                m = re.search(
+                    r"(?P<currency>\$|Rs\.?|INR|USD|EUR|£|€)?\s*(?P<amount>[\d,.]+)\s*(?P<unit>crore|crores|million|billion|mn|bn|m|b)?",
+                    raw_val,
+                    re.IGNORECASE,
+                )
+                if m and m.group("amount"):
+                    parts = [m.group("amount")]
+                    unit = m.group("unit")
+                    if unit:
+                        u_low = unit.lower()
+                        if u_low in ("crore", "crores"):
+                            parts.append("crore")
+                        elif u_low in ("million", "mn", "m"):
+                            parts.append("million")
+                        elif u_low in ("billion", "bn", "b"):
+                            parts.append("billion")
+                        else:
+                            parts.append(unit)
+                    amount = " ".join(parts)
+                    if m.group("currency"):
+                        currency = m.group("currency")
+
+    # Fallback checks on the 1-3 isolated paragraphs for amount / round if GLiNER entity span was partial
+    combined_paras = " ".join(relevant_paras)
+    if not amount or not currency:
+        amount_match = re.search(
+            r"(?P<currency>\$|Rs\.?|INR|USD|EUR|£|€)\s?(?P<amount>[\d,.]+)\s?(?P<unit>crore|crores|million|billion|mn|bn|m|b)?",
+            combined_paras,
+            flags=re.IGNORECASE,
+        )
+        if amount_match:
+            if not amount:
+                amt = amount_match.group("amount")
+                unit = amount_match.group("unit")
+                if unit:
+                    u_low = unit.lower()
+                    if u_low in ("crore", "crores"):
+                        unit_str = "crore"
+                    elif u_low in ("million", "mn", "m"):
+                        unit_str = "million"
+                    elif u_low in ("billion", "bn", "b"):
+                        unit_str = "billion"
+                    else:
+                        unit_str = unit
+                    amount = f"{amt} {unit_str}"
+                else:
+                    amount = amt
+            if not currency:
+                currency = amount_match.group("currency")
+
+    if not round_type:
+        round_match = re.search(r"\b(seed|pre-seed|series [a-z]|debt)\b", combined_paras, flags=re.IGNORECASE)
+        if round_match:
+            r_str = round_match.group(1).lower()
+            if "series" in r_str:
+                round_type = r_str.title()
+            elif "pre-seed" in r_str:
+                round_type = "Pre-Seed"
+            else:
+                round_type = r_str.title()
+
+    if not amount and not round_type and not investors and not startup:
+        return None
+
     return Funding(
-        amount=" ".join(part for part in [
-            amount_match.group("amount") if amount_match else None,
-            amount_match.group("unit") if amount_match else None,
-        ] if part),
-        currency=amount_match.group("currency") if amount_match else None,
-        round=round_match.group(1).title() if round_match else None,
-        investors=[investor for investor in investors if investor],
+        amount=amount,
+        currency=currency,
+        round=round_type,
+        investors=investors,
+        startup=startup,
     )
 
 
-_GEMINI_CHAIN = None
-
-
-def _get_gemini_chain(api_key: str | None = None):
-    global _GEMINI_CHAIN
-    if _GEMINI_CHAIN is not None:
-        return _GEMINI_CHAIN
-    active_key = settings.get_api_key(api_key)
-    if not active_key:
-        return None
-    try:
-        from langchain_core.output_parsers import JsonOutputParser
-        from langchain_core.prompts import ChatPromptTemplate
-        from langchain_google_genai import ChatGoogleGenerativeAI
-
-        llm = ChatGoogleGenerativeAI(
-            model=settings.gemini_model,
-            google_api_key=active_key,
-            temperature=0.0,
+def funding_for(
+    text: str,
+    category: str | Sequence[str] | None = None,
+) -> Funding | None:
+    if category is not None:
+        is_funding = (
+            "funding" in category
+            if isinstance(category, (list, tuple, set))
+            else category == "funding"
         )
-        prompt = ChatPromptTemplate.from_messages(
-            [
-                (
-                    "system",
-                    (
-                        "You are an information extraction assistant. Extract JSON for an Indian tech news article. "
-                        "Return ONLY valid JSON with keys exactly: summary, companies, people, locations, category, funding. "
-                        "Category must be one of funding, product launch, policy, M&A, layoffs, AI, earnings, general."
-                    ),
-                ),
-                ("human", "Article text:\n{article_text}"),
-            ]
-        )
-        _GEMINI_CHAIN = prompt | llm | JsonOutputParser()
-        return _GEMINI_CHAIN
-    except Exception:
-        return None
-
-
-@traceable(name="ask_gemini_enrichment", run_type="llm", tags=["extracting"])
-def ask_gemini(
-    html_text: str,
-    heuristic_payload: dict[str, Any],
-    api_key: str | None = None,
-) -> dict[str, Any]:
-    """Enrich heuristic extraction using LangChain ChatGoogleGenerativeAI JSON chain."""
-    chain = _get_gemini_chain(api_key=api_key)
-    if chain is None:
-        return heuristic_payload
-    try:
-        parsed = chain.invoke({"article_text": html_text[:6000]})
-    except Exception:
-        return heuristic_payload
-
-    merged = dict(heuristic_payload)
-    for key in ("summary", "companies", "people", "locations", "category", "categories", "funding"):
-        value = parsed.get(key)
-        if value:
-            merged[key] = value
-    return merged
-
-
-# Backward-compatibility alias
-ask_ollama = ask_gemini
+        if not is_funding:
+            return None
+    return extract_funding(text)
 
 
 @traceable(name="extract_article", run_type="parser", tags=["extracting"])
 def extract_article(
     path: Path,
     manifest_row: dict[str, Any],
-    api_key: str | None = None,
-    use_llm: bool = False,
 ) -> ArticleRecord:
     html = path.read_text(encoding="utf-8", errors="ignore")
     soup = BeautifulSoup(html, "html.parser")
@@ -679,24 +843,13 @@ def extract_article(
     categories = classify_article_categories(title, body, url=url_str, soup=soup)
     category = categories[0] if categories else "general"
     funding_info = funding_for(body, categories)
-    heuristic_payload = {
-        "summary": sentence_summary(body),
-        "companies": companies,
-        "people": people,
-        "locations": locations,
-        "category": category,
-        "categories": categories,
-        "funding": funding_info.model_dump() if funding_info else None,
-    }
-    enriched = (
-        ask_gemini(body, heuristic_payload, api_key=api_key)
-        if use_llm
-        else heuristic_payload
-    )
-    final_category = str(enriched.get("category") or category)
-    final_categories = list(enriched.get("categories") or categories)
-    if final_category not in final_categories:
-        final_categories.insert(0, final_category)
+    if funding_info and funding_info.startup:
+        if funding_info.startup not in companies:
+            companies.insert(0, funding_info.startup)
+    if funding_info and funding_info.investors:
+        for inv in funding_info.investors:
+            if inv not in companies and inv not in people and inv not in locations:
+                companies.append(inv)
 
     return ArticleRecord(
         id=str(manifest_row["id"]),
@@ -705,22 +858,18 @@ def extract_article(
         author=author or "",
         published_at=normalize_datetime(published),
         body=body,
-        summary=str(enriched["summary"]),
-        companies=list(enriched.get("companies") or []),
-        people=list(enriched.get("people") or []),
-        locations=list(enriched.get("locations") or []),
-        category=final_category,
-        categories=final_categories,
-        funding=enriched.get("funding"),
+        summary=sentence_summary(body),
+        companies=companies,
+        people=people,
+        locations=locations,
+        category=category,
+        categories=categories,
+        funding=funding_info.model_dump() if funding_info else None,
     )
 
 
 @traceable(name="extract_pipeline", run_type="chain", tags=["extracting"])
-def run_extract(
-    force: bool = False,
-    api_key: str | None = None,
-    use_llm: bool = False,
-) -> None:
+def run_extract(force: bool = False) -> None:
     settings.ensure_dirs()
     manifest_path = settings.raw_dir / "manifest.json"
     manifest = {row["id"]: row for row in read_json(manifest_path)} if manifest_path.exists() else {}
@@ -733,8 +882,7 @@ def run_extract(
     extracted = 0
     skipped = 0
 
-    mode_label = "with Gemini refinement" if use_llm else "fast deterministic mode"
-    print(f"Starting extraction for {total} raw articles ({mode_label})...")
+    print(f"Starting extraction for {total} raw articles...")
 
     for idx, html_path in enumerate(html_files, start=1):
         article_id = html_path.stem
@@ -750,7 +898,7 @@ def run_extract(
             skipped += 1
             continue
         try:
-            record = extract_article(html_path, row, api_key=api_key, use_llm=use_llm)
+            record = extract_article(html_path, row)
             write_json(output_path, record.model_dump(mode="json"))
             extracted += 1
             if extracted % 10 == 0 or extracted == 1:
@@ -770,19 +918,8 @@ def run_extract(
 def main() -> None:
     parser = argparse.ArgumentParser(description="Extract validated article records.")
     parser.add_argument("--force", action="store_true", help="Re-extract existing records.")
-    parser.add_argument(
-        "--use-gemini",
-        action="store_true",
-        help="Use Gemini LLM to refine extracted fields (slower due to remote API rate limits).",
-    )
-    parser.add_argument(
-        "--api-key",
-        default=None,
-        help="Gemini API Key override (enables Gemini refinement if provided).",
-    )
     args = parser.parse_args()
-    use_llm = args.use_gemini or bool(args.api_key)
-    run_extract(force=args.force, api_key=args.api_key, use_llm=use_llm)
+    run_extract(force=args.force)
 
 
 if __name__ == "__main__":

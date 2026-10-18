@@ -9,21 +9,21 @@
   ],
   "category": "fintech",
   "companies": [
-    "UPI",
-    "Digital Commerce",
+    "Aadhaar",
+    "Account Aggregator (AA",
+    "ONDC",
     "Nubank",
     "Revolut",
-    "Electronic Money Institution",
-    "BNPL",
-    "RBI",
-    "Credit Line",
-    "KYC",
-    "NBFC",
-    "TDS",
-    "CBDC",
-    "Digital Personal Data Protection Act",
-    "Upstox",
-    "Kuvera"
+    "Chime",
+    "fintechs",
+    "banks",
+    "NBFCs",
+    "CLOU",
+    "FCA",
+    "Monzo",
+    "Wise",
+    "Slice",
+    "Uni"
   ],
   "funding": null,
   "id": "20f079e56b3ba63b",
@@ -32,7 +32,7 @@
     "Singapore"
   ],
   "people": [
-    "Angel One"
+    "and founder"
   ],
   "published_at": "2026-05-18T10:41:33Z",
   "summary": "India has built the world’s most envied digital financial infrastructure. The Unified Payments Interface (UPI) clears 18 billion transactions a month. Aadhaar onboards customers at near-zero cost.",

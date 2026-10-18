@@ -98,7 +98,7 @@ Raw HTML is stored in `data/raw/<sha256-prefix>.html`. `data/raw/manifest.json` 
 
 `scrape.py` keeps network crawling separate from downstream parsing. It hashes canonical URLs, skips files already on disk, and maintains a manifest so reruns do not duplicate work.
 
-`extract.py` reads raw HTML and writes Pydantic v2 validated records to `data/records/<id>.json`. It uses trafilatura first for article text, JSON-LD (including `@graph`) and metadata for publication dates, heuristic extraction for entities/category/funding, and optional Google Gemini JSON mode (`gemini-3.8-flash` via LangChain) to refine summaries and structured fields. A record with no publisher-supplied, parseable date is rejected and logged rather than assigned the scrape time.
+`extract.py` reads raw HTML and writes Pydantic v2 validated records to `data/records/<id>.json`. It uses trafilatura first for article text, JSON-LD (including `@graph`) and metadata for publication dates, GLiNER (`urchade/gliner_small-v2.1`) zero-shot Named Entity Recognition for high-precision extraction of companies, people, and locations, deterministic sentence summarization, and rule-based category/funding parsing. A record with no publisher-supplied, parseable date is rejected and logged rather than assigned the scrape time.
 
 `index.py` reads validated records, chunks article bodies, and indexes LangChain `Document` objects into a local persistent ChromaDB collection via `langchain-chroma` and `langchain-huggingface` embeddings. Re-indexing replaces existing chunks for each article and removes stale chunks, so filtered-out records cannot remain searchable.
 
@@ -106,18 +106,18 @@ Raw HTML is stored in `data/raw/<sha256-prefix>.html`. `data/raw/manifest.json` 
 
 ## Extraction Accuracy
 
-Extraction accuracy is measured by spot-checking a small sample of raw HTML files against the corresponding JSON records: title, date, author, body cleanliness, summary faithfulness, entity lists, and category. The extractor is deliberately conservative: if Gemini is unavailable or returns malformed JSON, the deterministic heuristics still produce valid records and log only true validation failures.
+Extraction accuracy is measured by spot-checking a small sample of raw HTML files against the corresponding JSON records: title, date, author, body cleanliness, summary faithfulness, entity lists, and category. The extractor uses GLiNER zero-shot token classification with chunked inference to prevent false positives from generic nouns, industry sectors, or financial metrics, raising a hard error (`GLiNER not working`) if the neural model fails.
 
 ## Chunking And Embeddings
 
-The pipeline implements **recursive character chunking** using LangChain's `RecursiveCharacterTextSplitter` with hierarchical separators (`["\n\n", "\n", ". ", " ", ""]`). The default chunk size is 1200 characters with 200 characters of overlap. This ensures paragraphs and sentences are preserved intact wherever possible, avoiding unnatural cuts across semantic boundaries while maintaining precise retrieval context. The default embedding model is `sentence-transformers/all-MiniLM-L6-v2` because it is small, local, and fast enough for a coursework-sized corpus. ChromaDB is persisted under `data/chroma`.
+The pipeline implements **recursive character chunking** using LangChain's `RecursiveCharacterTextSplitter` with hierarchical separators (`["\n\n", "\n", ". ", " ", ""]`). The default chunk size is 1000 characters with 200 characters of overlap. This ensures paragraphs and sentences are preserved intact wherever possible, avoiding unnatural cuts across semantic boundaries while maintaining precise retrieval context. The default embedding model is `sentence-transformers/all-MiniLM-L6-v2` because it is small, local, and fast enough for a coursework-sized corpus. ChromaDB is persisted under `data/chroma`.
 
 ## Observability & Debugging with LangSmith
 
 LangSmith tracing is integrated across all four stages of the pipeline to monitor execution, track latency, and pinpoint failures:
 
 - **Scraping (`scrape.py`)**: Traces discovery (`scrape_discover_urls`), raw downloads (`scrape_fetch_url`), HTTP status codes, and robots.txt checks.
-- **Extracting (`extract.py`)**: Traces HTML cleaning/parsing (`extract_article`), schema validation, and Gemini JSON enrichment (`ask_gemini_enrichment`).
+- **Extracting (`extract.py`)**: Traces HTML cleaning/parsing (`extract_article`), schema validation, and pipeline execution (`extract_pipeline`).
 - **Indexing (`index.py`)**: Traces batch chunking, document creation, and vector store upserts into ChromaDB (`index_pipeline`).
 - **Querying (`query.py` & `src/news_rag/langchain_rag.py`)**: Traces query planning (`rag_query_pipeline`), vector retrieval (`chroma_retrieval`), lexical fallback (`lexical_retrieval`), and Gemini answer generation (`gemini_answer_generation`).
 
@@ -135,8 +135,8 @@ LangSmith tracing is integrated across all four stages of the pipeline to monito
 
 ## Known Limitations
 
-The entity and funding heuristics are intentionally lightweight and can confuse names, companies, and branded phrases when running without LLM refinement. Economic Times page structure can change; a changed structure may cause date extraction failures or fewer than `MIN_ARTICLES` permitted URLs, which the pipeline now reports instead of silently fabricating data or indexing a partial corpus. Local embeddings (`sentence-transformers/all-MiniLM-L6-v2` via HuggingFace) keep indexing private and offline, while Gemini can optionally improve extraction and answer synthesis.
+Economic Times page structure can change; a changed structure may cause date extraction failures or fewer than `MIN_ARTICLES` permitted URLs, which the pipeline now reports instead of silently fabricating data or indexing a partial corpus. Local embeddings (`sentence-transformers/all-MiniLM-L6-v2` via HuggingFace) keep indexing private and offline, while Gemini can optionally improve extraction and answer synthesis.
 
 ## Next Steps
 
-With another week, I would add a manual evaluation sheet for 25 records, expand date parsing for more publisher formats, add named-entity recognition with spaCy or GLiNER, expose a richer CLI for source inspection, and add an automated retrieval-quality test set.
+With another week, I would add a manual evaluation sheet for 25 records, expand date parsing for more publisher formats, expose a richer CLI for source inspection, and add an automated retrieval-quality test set.

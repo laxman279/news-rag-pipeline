@@ -8,22 +8,24 @@
   ],
   "category": "funding",
   "companies": [
-    "Pantomath Group",
     "Boldfit",
-    "Bessemer Venture Partners",
+    "Wealth Company Alternates",
+    "Pantomath Group",
     "Bharat Value Fund",
     "Zetwerk Manufacturing",
     "Amnex Infotechnologies",
-    "Wealth Company Asset Management Private Limited",
+    "Big Mishra",
+    "Wealth Company Asset Management",
     "Avendus Capital"
   ],
   "funding": {
     "amount": "400 crore",
     "currency": "Rs",
     "investors": [
-      "Bessemer Venture Partners in its series A round in 2024"
+      "Wealth Company Alternates"
     ],
-    "round": "Series B"
+    "round": "Series B",
+    "startup": "Boldfit"
   },
   "id": "6f4ba27fc1987971",
   "locations": [

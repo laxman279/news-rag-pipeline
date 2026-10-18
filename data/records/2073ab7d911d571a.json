@@ -4,10 +4,18 @@
   ],
   "body": "South Korea has found hacking incidents at a total of 16 financial firms and around 100,000 cases of data leaks so far, the country's financial regulator said on Wednesday.\n\nFinancial authorities are conducting an in-depth investigation into hacking methods to determine whether AI was involved, the Financial Services Commission (FSC) said in a statement.\n\nThe FSC said it would conduct security inspections at financial firms and prepare measures for early detection of hacking threats as well as joint response.",
   "categories": [
-    "AI"
+    "cybersecurity",
+    "fintech",
+    "AI",
+    "funding",
+    "enterprise tech",
+    "policy"
   ],
-  "category": "AI",
+  "category": "cybersecurity",
   "companies": [
+    "financial firms",
+    "financial regulator",
+    "Financial authorities",
     "Financial Services Commission",
     "FSC"
   ],

@@ -21,8 +21,8 @@ def index_records() -> None:
         for record in records
         for chunk in chunks_for_record(
             record,
-            chunk_size=settings.chunk_size_tokens,
-            overlap=settings.chunk_overlap_tokens,
+            chunk_size=settings.chunk_size_chars,
+            overlap=settings.chunk_overlap_chars,
         )
     }
     existing_ids = vectorstore.get(include=[]).get("ids", [])
@@ -37,8 +37,8 @@ def index_records() -> None:
             vectorstore.delete(ids=ids)
         chunks = chunks_for_record(
             record,
-            chunk_size=settings.chunk_size_tokens,
-            overlap=settings.chunk_overlap_tokens,
+            chunk_size=settings.chunk_size_chars,
+            overlap=settings.chunk_overlap_chars,
         )
         if not chunks:
             continue

@@ -8,7 +8,10 @@
   ],
   "category": "funding",
   "companies": [
-    "RDI",
+    "five focused research organisations (FROs",
+    "Blume",
+    "Kalaari",
+    "Chiratae",
     "Chiratae Ventures",
     "Blume Ventures",
     "Kalaari Capital",
@@ -17,20 +20,33 @@
     "IvyCap Ventures",
     "Ideaspring Capital",
     "TVS Capital Funds",
-    "Research, Development and Innovation",
-    "Centre for Cellular and Molecular Platforms",
-    "IIT Madras Research Park",
-    "Pilani Innovation",
-    "Society for Innovation & Entrepreneurship",
-    "Celesta India AIF Managers"
+    "Society for Innovation & Entrepreneurship (SINE",
+    "Celesta India AIF Managers",
+    "AdvantEdge Investment Managers",
+    "AMA Capital Advisors",
+    "Translation Endeavors",
+    "Sixth Sense Ventures"
   ],
   "funding": {
     "amount": "1",
     "currency": "Rs",
     "investors": [
-      "companies"
+      "Chiratae Ventures",
+      "Blume Ventures",
+      "Kalaari Capital",
+      "Speciale Invest",
+      "YourNest Capital",
+      "IvyCap Ventures",
+      "Ideaspring Capital",
+      "TVS Capital Funds",
+      "Celesta India AIF Managers",
+      "AdvantEdge Investment Managers",
+      "AMA Capital Advisors",
+      "Translation Endeavors",
+      "Sixth Sense Ventures"
     ],
-    "round": null
+    "round": null,
+    "startup": "five focused research organisations (FROs"
   },
   "id": "f4516222e45a0881",
   "locations": [
@@ -38,7 +54,7 @@
     "India"
   ],
   "people": [
-    "deeptech companies"
+    "selected managers"
   ],
   "published_at": "2026-10-13T06:01:30Z",
   "summary": "Chiratae Ventures, Blume Ventures, Kalaari Capital, Speciale Invest, YourNest Capital, IvyCap Ventures, Ideaspring Capital and TVS Capital Funds are among the 19 fund managers in the first cohort of the government’s Rs 1 lakh crore Research, Development and Innovation (RDI) scheme. The fund has made a total commitment of Rs 7,131 crore to the cohort. The fund managers comprise 14 alternative investment funds (AIFs) and five focused research organisations (FROs), which will channel long-term capital into deeptech startups and private sector research and development.",

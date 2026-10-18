@@ -58,6 +58,21 @@ def test_chunk_ids_are_idempotent() -> None:
     assert first[0].metadata["chunk_index"] == 0
 
 
+def test_chunks_for_record_prepends_summary() -> None:
+    record = make_record()
+    chunks = chunks_for_record(record, chunk_size=40, overlap=10)
+    assert len(chunks) > 0
+    for chunk in chunks:
+        assert chunk.text.startswith("Summary: Example summary.\n\n")
+
+
+def test_chunks_for_record_can_disable_summary_prepending() -> None:
+    record = make_record()
+    chunks = chunks_for_record(record, chunk_size=40, overlap=10, prepend_summary=False)
+    assert len(chunks) > 0
+    assert not chunks[0].text.startswith("Summary:")
+
+
 def test_split_text_empty_and_whitespace() -> None:
     assert split_text("") == []
     assert split_text("   \n\n  \t  ") == []

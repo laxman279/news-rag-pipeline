@@ -4,31 +4,38 @@
   ],
   "body": "Clueso, an AI video creation startup founded by IIT Madras alumni, has raised $10 million in a round led by Dharana Capital.The round saw participation from new investors Founders Future and Neotribe Ventures, along with existing investors Y Combinator and f7 Ventures. More than 80% of the fresh capital came from existing investors, the company said, taking its total capital-raise to $12 million.The Bengaluru and San Francisco-based company is\n\nBusiness NewsTechFundingYC-backed AI video creation startup Clueso raises $10 million led by Dharana Capital\n\nYC-backed AI video creation startup Clueso raises $10 million led by Dharana Capital",
   "categories": [
-    "AI",
-    "funding"
+    "funding",
+    "AI"
   ],
-  "category": "AI",
+  "category": "funding",
   "companies": [
     "Clueso",
     "Dharana Capital",
-    "IIT Madras",
     "Founders Future",
     "Neotribe Ventures",
+    "Y Combinator",
     "f7 Ventures"
   ],
   "funding": {
     "amount": "10 million",
     "currency": "$",
     "investors": [
-      "Dharana Capital"
+      "Dharana Capital",
+      "Founders Future",
+      "Neotribe Ventures",
+      "Y Combinator",
+      "f7 Ventures"
     ],
-    "round": null
+    "round": null,
+    "startup": "Clueso"
   },
   "id": "d53a7b54d44b7721",
   "locations": [
     "Bengaluru"
   ],
-  "people": [],
+  "people": [
+    "IIT Madras alumni"
+  ],
   "published_at": "2026-10-13T12:00:00Z",
   "summary": "Clueso, an AI video creation startup founded by IIT Madras alumni, has raised $10 million in a round led by Dharana Capital.The round saw participation from new investors Founders Future and Neotribe Ventures, along with existing investors Y Combinator and f7 Ventures. More than 80% of the fresh capital came from existing investors, the company said, taking its total capital-raise to $12 million.The Bengaluru and San Francisco-based company is\n\nBusiness NewsTechFundingYC-backed AI video creation startup Clueso raises $10 million led by Dharana Capital\n\nYC-backed AI video creation startup Clueso raises $10 million led by Dharana Capital",
   "title": "YC-backed AI video creation startup Clueso raises $10 million led by Dharana Capital",

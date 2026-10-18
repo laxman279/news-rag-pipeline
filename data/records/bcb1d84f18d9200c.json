@@ -4,20 +4,17 @@
   ],
   "body": "Agilent Technologies said on Tuesday it would acquire pathology software maker Proscia for $240 million in cash, plus up to $30 million tied to future performance targets, as the laboratory equipment maker expands its push into AI-enabled diagnostics.\n\nHere are some more details:\n\nPrivately held Proscia develops software that converts pathology slides into digital images that can be stored, reviewed and analyzed using artificial intelligence tools\n\nAgilent said the acquisition would strengthen its pathology business and expand its presence in digital and AI-enabled diagnostics\n\nThe deal would provide Agilent access to a high-growth software business that generated more than $18 million in revenue over the past 12 months\n\nThe companies have worked together since 2022, when they entered a multi-year distribution agreement to offer a digital pathology system combining Agilent's pathology products with Proscia's software\n\nThe deal is expected to close early in Agilent's fiscal 2027.",
   "categories": [
-    "M&A",
     "AI",
-    "funding"
+    "M&A",
+    "product launch"
   ],
-  "category": "M&A",
+  "category": "AI",
   "companies": [
+    "Agilent",
+    "Proscia",
     "Agilent Technologies"
   ],
-  "funding": {
-    "amount": "240 million",
-    "currency": "$",
-    "investors": [],
-    "round": null
-  },
+  "funding": null,
   "id": "bcb1d84f18d9200c",
   "locations": [],
   "people": [],

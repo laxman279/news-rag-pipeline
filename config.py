@@ -54,6 +54,7 @@ class Settings:
     ).strip()
     gemini_model: str = os.getenv("GEMINI_MODEL", "gemini-3.8-flash").strip()
     llm_model: str = os.getenv("LLM_MODEL", "gemini-3.8-flash").strip()
+    gliner_model: str = os.getenv("GLINER_MODEL", "urchade/gliner_small-v2.1").strip()
 
     def get_api_key(self, override: str | None = None) -> str:
         """Return the active Gemini API key from explicit override, GEMINI_API_KEY, or GOOGLE_API_KEY."""
@@ -66,18 +67,16 @@ class Settings:
     embedding_model: str = os.getenv(
         "EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2"
     )
-    chunk_size_chars: int = _int_env(
-        "CHUNK_SIZE_CHARS", _int_env("CHUNK_SIZE_TOKENS", 1200)
-    )
-    chunk_overlap_chars: int = _int_env(
-        "CHUNK_OVERLAP_CHARS", _int_env("CHUNK_OVERLAP_TOKENS", 200)
-    )
-    chunk_size_tokens: int = _int_env(
-        "CHUNK_SIZE_TOKENS", _int_env("CHUNK_SIZE_CHARS", 1200)
-    )
-    chunk_overlap_tokens: int = _int_env(
-        "CHUNK_OVERLAP_TOKENS", _int_env("CHUNK_OVERLAP_CHARS", 200)
-    )
+    chunk_size_chars: int = _int_env("CHUNK_SIZE_CHARS", 1000)
+    chunk_overlap_chars: int = _int_env("CHUNK_OVERLAP_CHARS", 200)
+
+    @property
+    def chunk_size_tokens(self) -> int:
+        return self.chunk_size_chars
+
+    @property
+    def chunk_overlap_tokens(self) -> int:
+        return self.chunk_overlap_chars
     top_k: int = _int_env("TOP_K", 5)
 
     langsmith_api_key: str = (
