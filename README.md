@@ -90,7 +90,7 @@ LangSmith tracing is integrated across all four stages of the pipeline to monito
 
 ## Known Limitations
 
-extract.py's runtime can be an issue with a larger number of files.
-A company or person can be named multiple times in different ways that appear on the site. 
-Economic Times page structure can change; a changed structure may cause multiple failures or fewer than `MIN_ARTICLES` permitted URLs.
+- extract.py's runtime can be an issue with a larger number of files.
+- A company or person can be named multiple times in different ways that appear on the site. 
+- Economic Times page structure can change; a changed structure may cause multiple failures or fewer than `MIN_ARTICLES` permitted URLs.
 
