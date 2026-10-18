@@ -122,22 +122,8 @@ LangSmith tracing is integrated across all four stages of the pipeline to monito
 - **Indexing (`index.py`)**: Traces batch chunking, document creation, and vector store upserts into ChromaDB (`index_pipeline`).
 - **Querying (`query.py` & `src/news_rag/langchain_rag.py`)**: Traces query planning (`rag_query_pipeline`), vector retrieval (`chroma_retrieval`), lexical fallback (`lexical_retrieval`), and Gemini answer generation (`gemini_answer_generation`).
 
-### Enabling LangSmith Tracing
-
-1. Add your LangSmith API key to `.env`:
-   ```env
-   LANGSMITH_TRACING=true
-   LANGSMITH_API_KEY=your-langsmith-api-key-here
-   LANGSMITH_PROJECT=news-rag-pipeline
-   ```
-2. Run any stage (`python scrape.py`, `python extract.py`, `python index.py`, or `python query.py ...`).
-3. View the trace trees, run durations, input/output payloads, and error stack traces in real time on [smith.langchain.com](https://smith.langchain.com).
-4. If `LANGSMITH_API_KEY` is not provided, tracing is disabled gracefully without any errors or overhead.
 
 ## Known Limitations
 
-Economic Times page structure can change; a changed structure may cause date extraction failures or fewer than `MIN_ARTICLES` permitted URLs, which the pipeline now reports instead of silently fabricating data or indexing a partial corpus. Local embeddings (`sentence-transformers/all-MiniLM-L6-v2` via HuggingFace) keep indexing private and offline, while Gemini can optionally improve extraction and answer synthesis.
+extract.py's runtime can be an issue with a larger number of files.A company or person can be named multiple times in different ways that appear on the site. Economic Times page structure can change; a changed structure may cause multiple failures or fewer than `MIN_ARTICLES` permitted URLs.
 
-## Next Steps
-
-With another week, I would add a manual evaluation sheet for 25 records, expand date parsing for more publisher formats, expose a richer CLI for source inspection, and add an automated retrieval-quality test set.
