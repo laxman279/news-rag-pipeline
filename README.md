@@ -1,4 +1,5 @@
 # News RAG Pipeline
+demo video link : https://drive.google.com/file/d/19qm0IWlTLDP6NMdXIt35xvvgZ_fmJHeq/view?usp=sharing
 
 This project builds a local Python RAG pipeline over Economic Times Tech articles. It is split into four checkpoint scripts so each stage can be run and debugged independently.
  
