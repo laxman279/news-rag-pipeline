@@ -23,7 +23,7 @@ pip install -r requirements.txt
 cp .env.example .env
 python index.py
 python query.py "What AI stories are covered?"
-pytest
+python query.py --run-samples
 ```
 
 ### Windows (PowerShell)
@@ -35,7 +35,7 @@ pip install -r requirements.txt
 Copy-Item .env.example .env
 python index.py
 python query.py "What AI stories are covered?"
-pytest
+python query.py --run-samples
 ```
 
 > **API Key Note:** `GEMINI_API_KEY` is completely optional. Without an API key, the pipeline operates in a deterministic, fully source-cited extractive mode. If a key is provided in `.env` or passed via `--api-key`, the pipeline uses Gemini (`gemini-3.8-flash`) for structured query parsing and grounded answer synthesis.
