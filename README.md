@@ -1,96 +1,205 @@
 # News RAG Pipeline
-demo video link : https://drive.google.com/file/d/19qm0IWlTLDP6NMdXIt35xvvgZ_fmJHeq/view?usp=sharing
 
-This project builds a local Python RAG pipeline over Economic Times Tech articles. It is split into four checkpoint scripts so each stage can be run and debugged independently.
- 
-## Setup And Run
+A production-grade, modular Retrieval-Augmented Generation (RAG) pipeline designed for crawling, extracting, indexing, and querying news articles from **The Economic Times Tech**. Built with Python, LangChain, ChromaDB, Sentence-Transformers, GLiNER, and Google Gemini.
 
-The repository includes pre-extracted article records in `data/records/`, so you can evaluate indexing and querying immediately without waiting for web scraping.
+The system is partitioned into four independent, checkpointed stages:
+1. **Scraping (`scrape.py`)**: Ethical RSS and category discovery with `robots.txt` compliance, rate limiting, and raw HTML archival.
+2. **Extraction (`extract.py`)**: Neural zero-shot Named Entity Recognition (GLiNER), Trafilatura article body extraction, JSON-LD metadata parsing, and Pydantic v2 validation.
+3. **Indexing (`index.py`)**: Semantic recursive character chunking, local sentence transformer embeddings, and persistent vector upsert with stale-chunk pruning in ChromaDB.
+4. **Querying (`query.py`)**: Structured query planning, hybrid vector/metadata retrieval, grounded Gemini answer synthesis with LangChain LCEL, and exact citation attribution.
 
-### 1. Environment Setup
+---
 
-**Windows (PowerShell):**
-```powershell
-python -m venv .venv
-. .venv/Scripts/Activate.ps1
-pip install -r requirements.txt
-Copy-Item .env.example .env
-```
+## 1. Setup in Under 10 Commands
 
-**macOS / Linux (Bash):**
+You can set up and evaluate the pipeline from scratch in **under 10 commands**:
+
+### Linux / macOS
 ```bash
+git clone <repo-url> && cd news-rag-pipeline
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env
+python index.py
+python query.py "What AI stories are covered?"
+pytest
 ```
 
-### 2. Full Pipeline from Scratch (Scraping & Extraction)
+### Windows (PowerShell)
+```powershell
+git clone <repo-url>; cd news-rag-pipeline
+python -m venv .venv
+. .venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+Copy-Item .env.example .env
+python index.py
+python query.py "What AI stories are covered?"
+pytest
+```
 
-If you wish to test live scraping and parsing end-to-end:
+> **API Key Note:** `GEMINI_API_KEY` is completely optional. Without an API key, the pipeline operates in a deterministic, fully source-cited extractive mode. If a key is provided in `.env` or passed via `--api-key`, the pipeline uses Gemini (`gemini-3.8-flash`) for structured query parsing and grounded answer synthesis.
+
+---
+
+## 2. Running Each Stage Separately
+
+Every pipeline stage runs as an independent CLI script checkpointed via the filesystem (`data/raw/`, `data/records/`, and `data/chroma/`):
 
 ```bash
-python scrape.py   # Discovers and downloads latest ET Tech articles into data/raw/
-python extract.py  # Cleans & extracts records (fast deterministic ~5s; use --use-gemini for LLM refinement)
-python index.py    # Chunks and indexes records into ChromaDB
+# Stage 1: Crawl ET Tech articles into data/raw/
+python scrape.py
+
+# Stage 2: Extract clean records into data/records/
+python extract.py
+
+# Stage 2 (Optional): Extract with LLM refinement
+python extract.py --use-gemini --api-key YOUR_API_KEY
+
+# Stage 3: Chunk and index records into ChromaDB
+python index.py
+
+# Stage 4: Query the RAG corpus
+python query.py "List all articles mentioning Bengaluru"
+
+# Stage 4: Run the full automated sample evaluation suite
+python query.py --run-samples
 ```
 
-### Running on Other Devices & API Key Configuration
+---
 
-To run this pipeline seamlessly on different machines or with different API keys, you can provide your Google Gemini API key in any of the following ways:
+## 3. Design Choices and Trade-Offs Per Stage
 
-1. **Environment Variable**:
-   ```powershell
-   # PowerShell
-   $env:GEMINI_API_KEY = "your-gemini-api-key-here"
-   
-   # Bash / macOS / Linux
-   export GEMINI_API_KEY="your-gemini-api-key-here"
-   ```
-2. **Command-Line Argument**:
-   ```powershell
-   python query.py "What funding rounds happened?" --api-key "your-key"
-   python query.py "Explain AI models" --api-key "your-key" --model "gemini-3.8-flash"
-   python extract.py --api-key "your-key"
-   ```
+### Stage 1: Web Scraping (`scrape.py`)
+- **Design Choices**:
+  - **Discovery**: Discovers article URLs using the official Economic Times Tech RSS feed combined with targeted category index pages (`/tech/technology`, `/tech/startups`, `/tech/artificial-intelligence`, etc.).
+  - **Polite Crawler Architecture**: Strictly parses and obeys `robots.txt` rules using Python's `urllib.robotparser`. If `robots.txt` cannot be fetched, the crawler fails closed and aborts rather than risking unpermitted crawling.
+  - **Throttling & Resilience**: Implements polite request delays (`REQUEST_DELAY_SECONDS=1.5`) with jitter, standard descriptive `User-Agent` headers, request timeouts (20s), and exponential backoff retries via `tenacity`.
+  - **Idempotent Archival**: Hashes canonical URLs with SHA-256 (`<hash[:16]>.html`) and maintains `data/raw/manifest.json`. Rerunning `scrape.py` skips already-downloaded articles.
+- **Trade-Offs**:
+  - *Requests + BeautifulSoup vs. Headless Browser (Playwright/Selenium)*: We chose static HTTP (`requests`) for speed, minimal resource usage, and zero browser daemon dependencies. The trade-off is the inability to scrape dynamic JavaScript-hydrated single-page applications (SPAs); however, Economic Times Tech serves full server-side rendered (SSR) HTML for article bodies and metadata.
 
-## Corpus
+### Stage 2: Extraction & Cleaning (`extract.py`)
+- **Design Choices**:
+  - **Multi-Pass Body Extraction**: Uses `trafilatura` as the primary body extractor due to its benchmark-proven boilerplate removal, falling back to targeted BeautifulSoup CSS selectors (`.artText`, `.Normal`).
+  - **Structured Metadata & Timestamps**: Extracts canonical headlines, author lists, and publication timestamps directly from publisher JSON-LD (`@graph` NewsArticle schema) and meta tags. All dates are normalized to UTC RFC3339 format (`YYYY-MM-DDTHH:MM:SSZ`).
+  - **Zero-Shot Neural NER**: Utilizes `GLiNER` (`urchade/gliner_small-v2.1`) for high-precision entity extraction across companies, people, and locations.
+  - **Multi-Category Classification**: Combines URL path analysis (e.g. `/tech/funding/` -> `funding`), metadata keywords, and semantic classification to assign multiple category tags per article (`categories: [...]`) and identify out-of-taxonomy domains (e.g., `quantum computing`).
+  - **Structured Funding Parsing**: Parses round name, amount, currency, startup name, and investor lists into a validated `Funding` model.
+  - **Strict Validation**: Rejects and logs records lacking publisher-supplied dates or clean text via Pydantic v2 `ArticleRecord`.
+- **Trade-Offs**:
+  - *Neural Zero-Shot NER (GLiNER) vs. Pure Regex vs. Pure LLM*: Pure regex is brittle and prone to false positives on multi-word company names (e.g., "Tata Sons", "Scale AI", "Superintelligence Labs"). LLM-only extraction is slow, expensive, and subject to rate limits. GLiNER provides local, sub-second zero-shot entity extraction with high accuracy and zero API cost.
 
-The chosen news site is Economic Times Tech. `scrape.py` discovers article URLs from the configured RSS feed and a small set of ET Tech category pages, then fetches up to `MAX_ARTICLES` articles while respecting `robots.txt`, request delays, timeouts, retries, and idempotent raw-file reuse. Newsletter URLs are deliberately excluded. If `robots.txt` is unavailable, the crawler fails closed and records the event; if fewer than `MIN_ARTICLES` permitted URLs are discovered, it stops before fetching a partial corpus.
+### Stage 3: Chunking & Indexing (`index.py`)
+- **Design Choices**:
+  - **Recursive Character Splitting**: Employs LangChain's `RecursiveCharacterTextSplitter` with chunk size of 1,000 characters and 200 characters overlap.
+  - **Local Dense Embeddings**: Generates 384-dimensional dense vectors using `sentence-transformers/all-MiniLM-L6-v2` via `langchain-huggingface`.
+  - **Persistent Vector Store**: Uses ChromaDB (`chromadb.PersistentClient`) persisted under `data/chroma/`.
+  - **Incremental Upsert & Stale Chunk Pruning**: Re-indexing replaces chunks for existing articles and deletes orphaned chunk IDs, ensuring removed or filtered records cannot linger in the search index.
+- **Trade-Offs**:
+  - *Local Sentence-Transformers vs. Commercial API Embeddings (e.g. Google text-embedding-004)*: Local embeddings run completely offline, have zero latency overhead from network calls, incur zero cost, and guarantee reproducible embeddings across all environments.
 
-Raw HTML is stored in `data/raw/<sha256-prefix>.html`. `data/raw/manifest.json` records the stable id, canonical URL, fetch time, and HTTP status. Failures go to `data/raw/failed_urls.log`.
+### Stage 4: Query Planning, Retrieval & Synthesis (`query.py` & `src/news_rag/langchain_rag.py`)
+- **Design Choices**:
+  - **Structured Query Planning**: A deterministic query planner (`plan_query`) detects structured filtering criteria: specific categories, date ranges, cities/locations, company names, quoted title lookups, and aggregation intents.
+  - **Dual-Path Hybrid Retrieval**:
+    - *Direct Record Matching*: Exact structured queries (e.g., "List all articles mentioning Bengaluru", quoted title matches, repeated investor counts) operate directly over validated record metadata for 100% precision.
+    - *Dense Vector Retrieval with Native Grouping*: Open-ended queries perform semantic search on ChromaDB, grouping chunks by article ID to return diverse, non-redundant contexts.
+    - *Lexical Fallback*: Automatically triggers keyword retrieval if ChromaDB is unavailable or yields zero matches.
+  - **Strict Grounding & Answer Synthesis**: Uses LangChain LCEL with Gemini (`ChatGoogleGenerativeAI`) instructed to answer strictly based on provided contexts and respond with `"The answer cannot be found in the corpus."` when information is missing.
+  - **Precise Citation Attribution**: Scans synthesized answers to cite *only* the specific article URLs whose facts or titles were actually used.
+- **Trade-Offs**:
+  - *Pure Semantic Search vs. Hybrid Planning*: Standard vector search performs poorly on aggregations (e.g. "Which investors appear in >1 round?") and exact phrase matching. Hybrid routing combines the speed and flexibility of vector search with the precision of structured relational queries.
 
-## Stage Design
+---
 
-`scrape.py` keeps network crawling separate from downstream parsing. It hashes canonical URLs, skips files already on disk, and maintains a manifest so reruns do not duplicate work.
+## 4. Extraction Method and Why
 
-`extract.py` reads raw HTML and writes Pydantic v2 validated records to `data/records/<id>.json`. It uses trafilatura first for article text, JSON-LD (including `@graph`) and metadata for publication dates, GLiNER (`urchade/gliner_small-v2.1`) zero-shot Named Entity Recognition for high-precision extraction of companies, people, and locations, deterministic sentence summarization, and rule-based category/funding parsing. A record with no publisher-supplied, parseable date is rejected and logged rather than assigned the scrape time.
+Accurate extraction from raw news HTML is challenging due to publisher ads, syndication sidebars, inline video players, and inconsistent metadata formatting. We selected a multi-layered hybrid extraction pipeline:
 
-`index.py` reads validated records, chunks article bodies, and indexes LangChain `Document` objects into a local persistent ChromaDB collection via `langchain-chroma` and `langchain-huggingface` embeddings. Re-indexing replaces existing chunks for each article and removes stale chunks, so filtered-out records cannot remain searchable.
+1. **Trafilatura for Clean Text**:
+   - *Why*: In standard NLP benchmarks, Trafilatura consistently outperforms readability algorithms and raw CSS scraping by stripping ads, comments, navigation bars, and image captions while preserving paragraph structure.
+2. **JSON-LD Schema Parsing**:
+   - *Why*: Rather than scraping fragile DOM headers, `parse_json_ld` extracts publisher-validated headlines, authors, and RFC3339 timestamps from embedded `<script type="application/ld+json">` blocks (supporting nested `@graph` structures). Articles lacking an authentic publisher date are rejected rather than assigned an inaccurate crawl timestamp.
+3. **GLiNER Neural Token Classification (`urchade/gliner_small-v2.1`)**:
+   - *Why*: Traditional spaCy models struggle on Indian tech entities and novel AI startup names. GLiNER uses bidirectional transformer representations to extract arbitrary zero-shot entity types (`company`, `person`, `location`) in single-batch chunked passes.
+4. **Boundary Heuristics & Boilerplate Pruning**:
+   - *Why*: Post-processing filters strip common news syndication boilerplate (e.g., "Latest News Updates on The Economic Times", "Subscribe Now", relationship modifiers like "backed by") from entity strings to eliminate merged or corrupted names.
+5. **Pydantic v2 Schema Enforcement**:
+   - *Why*: Guarantees data integrity, strict type validation, and immutable data modeling across the entire ingest pipeline.
 
-`query.py` uses a rule-based planner to identify metadata filters such as category, date range, location, company, title match, and aggregation intent. Exact list/title/location queries operate on matching records rather than approximate vector rankings; the repeated-investor query is calculated from validated funding metadata. Other queries use Chroma retrieval with a lexical fallback. Gemini synthesis is optional and the no-key path is deterministic and source-backed.
+---
 
-## Extraction Accuracy
+## 5. Chunking and Embedding Choices
 
-Extraction accuracy is measured by spot-checking a small sample of raw HTML files against the corresponding JSON records: title, date, author, body cleanliness, summary faithfulness, entity lists, and category. The extractor uses GLiNER zero-shot token classification with chunked inference to prevent false positives from generic nouns, industry sectors, or financial metrics, raising a hard error (`GLiNER not working`) if the neural model fails.
+| Parameter / Choice | Selection | Rationale |
+| :--- | :--- | :--- |
+| **Splitter** | `RecursiveCharacterTextSplitter` | Splits hierarchically on `["\n\n", "\n", ". ", " ", ""]`, respecting natural paragraph and sentence boundaries. |
+| **Chunk Size** | 1,000 characters (~150-200 words) | Compact enough to focus on single facts or funding deals, large enough to retain full contextual meaning. |
+| **Chunk Overlap** | 200 characters (~30-40 words) | Prevents loss of continuity or fractured entities across chunk boundaries. |
+| **Embedding Model** | `all-MiniLM-L6-v2` | Fast, lightweight 384-dimensional model optimized for sentence and paragraph similarity. Operates locally on CPU without rate limits. |
+| **Vector Database** | ChromaDB (Persistent) | Local, embedded, serverless vector store stored under `data/chroma/`. |
 
-## Chunking And Embeddings
+---
 
-The pipeline implements **recursive character chunking** using LangChain's `RecursiveCharacterTextSplitter` with hierarchical separators (`["\n\n", "\n", ". ", " ", ""]`). The default chunk size is 1000 characters with 200 characters of overlap. This ensures paragraphs and sentences are preserved intact wherever possible, avoiding unnatural cuts across semantic boundaries while maintaining precise retrieval context. The default embedding model is `sentence-transformers/all-MiniLM-L6-v2` because it is small, local, and fast enough for a coursework-sized corpus. ChromaDB is persisted under `data/chroma`.
+## 6. Observability & Tracing with LangSmith
 
-## Observability & Debugging with LangSmith
+LangSmith tracing is integrated across all four pipeline stages to monitor latency, inspect inputs/outputs, and debug retrieval quality:
 
-LangSmith tracing is integrated across all four stages of the pipeline to monitor execution, track latency, and pinpoint failures:
+- **Scraping**: Traces URL discovery, robots compliance, and HTTP download latency.
+- **Extraction**: Traces HTML cleaning, GLiNER inference, and Pydantic validation.
+- **Indexing**: Traces chunk splitting and ChromaDB upsert operations.
+- **Querying**: Traces structured planning, vector retrieval, and Gemini LCEL chain synthesis.
 
-- **Scraping (`scrape.py`)**: Traces discovery (`scrape_discover_urls`), raw downloads (`scrape_fetch_url`), HTTP status codes, and robots.txt checks.
-- **Extracting (`extract.py`)**: Traces HTML cleaning/parsing (`extract_article`), schema validation, and pipeline execution (`extract_pipeline`).
-- **Indexing (`index.py`)**: Traces batch chunking, document creation, and vector store upserts into ChromaDB (`index_pipeline`).
-- **Querying (`query.py` & `src/news_rag/langchain_rag.py`)**: Traces query planning (`rag_query_pipeline`), vector retrieval (`chroma_retrieval`), lexical fallback (`lexical_retrieval`), and Gemini answer generation (`gemini_answer_generation`).
+To enable tracing:
+```env
+LANGSMITH_TRACING=true
+LANGSMITH_API_KEY="your-langsmith-api-key"
+LANGSMITH_PROJECT="news-rag-pipeline"
+```
+*(If no LangSmith key is provided, tracing is disabled gracefully without runtime overhead).*
 
+---
 
-## Known Limitations
+## 7. Data Sample and Evaluation Results
 
-- extract.py's runtime can be an issue with a larger number of files.
-- A company or person can be named multiple times in different ways that appear on the site. 
-- Economic Times page structure can change; a changed structure may cause multiple failures or fewer than `MIN_ARTICLES` permitted URLs.
+The repository includes a curated data sample and a full evaluation report:
+- **`data/raw/`**: 5 representative raw HTML files and `manifest.json`.
+- **`data/records/`**: 5 corresponding extracted JSON records validating titles, authors, categories, dates, entities, and summaries.
+- **`results/sample_queries.md`**: Evaluation report containing verified answers and exact source citations across all sample queries:
+  1. *What funding rounds are mentioned in the corpus?*
+  2. *List all articles mentioning Bengaluru.*
+  3. *What does the corpus say about AI?*
+  4. *Find the article titled "Meta says its new AI models on par with OpenAI, Anthropic"*
+  5. *Which investors are appearing in >1 funding round?*
+  6. *What AI stories are covered?*
+  7. *Summarize layoffs in the corpus.* (Negative control — correctly reports unmentioned)
+  8. *What is the weather today?* (Unanswerable control — correctly rejected)
 
+---
+
+## 8. Known Limitations
+
+1. **Static HTML vs. Dynamic JavaScript**:
+   - The scraper relies on `requests` and server-rendered HTML. If The Economic Times shifts to client-side rendered Single Page Applications (SPAs) or enables dynamic paywalls, articles will require a headless browser.
+2. **Entity Ambiguity in Short Acronyms**:
+   - Short two-letter tokens (e.g. "AI", "US") require regex contextual guards to avoid misclassification as locations or organizations.
+3. **Single-Node Local ChromaDB**:
+   - ChromaDB is embedded locally via SQLite and DuckDB/hnswlib. While ideal for local development, production multi-tenant environments would require a managed, distributed vector database (e.g., Qdrant, Pinecone).
+4. **Publisher DOM Drift**:
+   - While JSON-LD extraction is resilient, articles published without JSON-LD metadata rely on CSS selector fallbacks that require maintenance when the publisher updates their frontend layouts, which could cause extraction failures or fewer than `MIN_ARTICLES` discovered.
+5. **Extraction Runtime at Scale**:
+   - `extract.py` utilizes GLiNER zero-shot neural token classification on CPU, which takes ~1-2s per article. Processing hundreds of articles without GPU acceleration or batching can be time-consuming.
+6. **Entity Alias Variation Across Articles**:
+   - A company or person may be referenced in varied surface forms across articles (e.g., "Tata Sons", "Tata Group", "Tata Electronics"). Full cross-document coreference and entity deduplication require canonical knowledge-base entity linking.
+
+---
+
+## 9. What I Would Do With Another Week
+
+If given an additional week, I would implement:
+1. **Headless Browser Crawler Fallback**: Integrate Playwright with stealth mode to bypass anti-scraping challenges and crawl JavaScript-rendered archives.
+2. **Cross-Encoder Reranking**: Add a cross-encoder model (e.g., `cross-encoder/ms-marco-MiniLM-L-6-v2`) over the top 25 retrieved vector candidates to rerank chunks by semantic relevance before passing context to the LLM.
+3. **Graph RAG / Knowledge Graph Integration**: Build an entity relation graph in NetworkX or Neo4j linking Startups $\leftrightarrow$ Funding Rounds $\leftrightarrow$ Investors $\leftrightarrow$ Founders, enabling multi-hop queries (e.g., "Which co-investors participated in rounds alongside Accel?").
+4. **Automated Evaluation Benchmark**: Implement automated RAG evaluation metrics using `ragas` or `TruLens` to measure Answer Faithfulness, Context Relevance, and Hallucination Frequency on synthetic test sets.
+5. **Interactive UI**: Develop a lightweight, responsive web interface (FastAPI + Streamlit or Next.js) with streaming generation, interactive source highlighting, and one-click trace inspection.

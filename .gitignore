@@ -17,6 +17,14 @@ data/raw/*
 !data/raw/1a72b68bc23b0924.html
 !data/raw/manifest.json
 
+# Extracted JSON records (keep 5 representative sample records)
+data/records/*
+!data/records/1151a3b83201a34b.json
+!data/records/116d514aae342126.json
+!data/records/13f8dfff139e6d67.json
+!data/records/14d2fc326d7f8317.json
+!data/records/1a72b68bc23b0924.json
+
 # Local vector database and logs (generated during index.py/runtime)
 data/chroma/
 data/index/

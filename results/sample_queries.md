@@ -2,11 +2,31 @@
 
 ## 1. What funding rounds are mentioned in the corpus?
 
-The answer cannot be found in the corpus.
+Based on the provided corpus, the following specific funding rounds are mentioned:
 
-Sources: none
+**Fintech Funding Rounds:**
+* **CRED:** $540 million Series H round in June [Source 1]
+* **KreditBee:** $220 million Series E round in April [Source 1]
+* **Weaver:** $103 million Series B round in March [Source 1]
+* **Slice:** $100 million Series D round in September [Source 1]
+* **Navi:** $100 million Series C round in August [Source 1]
 
-Correctness note: Sources are corpus-backed; without a Gemini key the answer is deterministic and extractive.
+**Weekly Startup / Tech Deals:**
+* **Boldfit:** Around Rs 400 crore ($41.5 million) raised from The Wealth Company Alternates [Source 2]
+* **GreenCell Mobility:** $34.5 million round [Source 2]
+* **Inner Sky Labs:** $30.9 million round [Source 2]
+* **Scimplify:** $25 million round (backed by Accel) [Source 2]
+* **Nat Habit:** Rs 142 crore ($14.7 million) all-primary round led by Trident Growth Partners [Source 2]
+* **Origin:** $20 million fundraise (backed by Accel) [Source 2]
+* **Spill Games:** $10.5 million round (backed by Elevation Capital) [Source 2]
+* **MakeO:** $10 million funding round [Source 2]
+* Additional investments include funding for **CosmoChute** (backed by Accel), **Mesa School of Business** (backed by Elevation Capital), and **Fission Labs** (backed by Pantera Capital) [Source 2].
+
+Sources:
+- https://economictimes.indiatimes.com/tech/funding/fintech-funding-rises-14-to-2-2-billion-in-jan-sep-deal-count-falls-41-tracxn/articleshow/134908441.cms
+- https://economictimes.indiatimes.com/tech/startups/ettech-deals-digest-boldfit-greencell-lead-as-weekly-funding-hits-232-million-down-45-on-year/articleshow/134999523.cms
+
+Correctness note: Sources are corpus-backed; synthesized with Gemini (with deterministic extractive fallback when run without API key).
 
 ## 2. List all articles mentioning Bengaluru.
 
@@ -58,11 +78,14 @@ Correctness note: Sources are corpus-backed; without a Gemini key the answer is 
 
 ## 5. Which investors are appearing in >1 funding round?
 
-No investor appears in more than one validated funding record.
+Investors appearing in more than one validated funding record:
+- SoftBank — 2 records
 
-Sources: none
+Sources:
+- https://economictimes.indiatimes.com/tech/artificial-intelligence/ai-credit-default-swap-spreads-widen-sharply/articleshow/134958105.cms
+- https://economictimes.indiatimes.com/tech/artificial-intelligence/softbank-junk-bond-sale-raises-stakes-for-ceo-sons-all-in-ai-bet/articleshow/134930375.cms
 
-Correctness note: Sources are corpus-backed; without a Gemini key the answer is deterministic and extractive.
+Correctness note: Computed deterministically from validated structured funding metadata across all corpus records.
 
 ## 6. What AI stories are covered?
 

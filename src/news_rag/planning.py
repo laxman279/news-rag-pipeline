@@ -141,6 +141,7 @@ def plan_query(
             "the", "a", "an", "and", "article", "articles", "news", "tech",
             "tell", "line", "lines", "about", "each", "every", "one", "show", "give", "list",
             "brief", "briefly", "short", "summary", "summarize", "detail", "details",
+            "corpus", "dataset", "database", "here", "data", "records", "collection",
         }
         terms = [
             t.lower().strip(".,;:?!'\"-")
