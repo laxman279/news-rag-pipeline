@@ -1,0 +1,356 @@
+[
+  {
+    "fetched_at": "2026-10-14T10:12:20.690297Z",
+    "http_status": 200,
+    "id": "0ea111a3772d1e48",
+    "url": "https://economictimes.indiatimes.com/tech/newsletters/morning-dispatch/sarvam-plans-big-fundraise-hcltechs-q2-profit-jumps/articleshow/134905940.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:34.973121Z",
+    "http_status": 200,
+    "id": "1151a3b83201a34b",
+    "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/meta-says-its-new-ai-models-on-par-with-openai-anthropic/articleshow/134906480.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:38.300533Z",
+    "http_status": 200,
+    "id": "116d514aae342126",
+    "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/nvidias-china-ai-chip-share-falls-as-huawei-closes-gap-report-finds/articleshow/134907732.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:12:23.755727Z",
+    "http_status": 200,
+    "id": "136c7366c7d70c3c",
+    "url": "https://economictimes.indiatimes.com/tech/newsletters/morning-dispatch/upi-mdr-rollout-pushed-indias-first-quantum-computer-coming-soon/articleshow/134929832.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:30.027288Z",
+    "http_status": 200,
+    "id": "13f8dfff139e6d67",
+    "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/in-a-first-ai-helps-uk-lawmaker-find-her-voice-in-parliament/articleshow/134922285.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:31.756704Z",
+    "http_status": 200,
+    "id": "14d2fc326d7f8317",
+    "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/indian-embassy-in-indonesia-introduces-ai-avatar-dewi/articleshow/134931667.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:23.313914Z",
+    "http_status": 200,
+    "id": "1a72b68bc23b0924",
+    "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/chips-critical-to-indias-future-but-demand-and-management-key-to-semiconductor-push-n-chandrasekaran/articleshow/134908647.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:40.077873Z",
+    "http_status": 200,
+    "id": "1aa23e60ce208697",
+    "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/redefining-enterprise-growth-with-ai-trust-data-and-decision-making-is-how-ada-is-writing-the-future-chapters/articleshow/133912040.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:44.958682Z",
+    "http_status": 200,
+    "id": "1b30e2f2260b56b2",
+    "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/trump-administration-plans-to-move-ai-testing-agency-officials-to-white-house-the-information/articleshow/134901531.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:08.209825Z",
+    "http_status": 200,
+    "id": "1cc40f0ffc86d6d0",
+    "url": "http://economictimes.indiatimes.com/tech/software/google-payment-app-tez-will-make-payments-as-simple-as-cash-caesar-sengupta/articleshow/60730054.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:48.452038Z",
+    "http_status": 200,
+    "id": "1ec654adedb1601a",
+    "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/us-india-must-deepen-cooperation-on-ai-semiconductors-for-shared-security-gina-raimondo/articleshow/134912781.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:43.346617Z",
+    "http_status": 200,
+    "id": "2073ab7d911d571a",
+    "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/south-korea-finds-hacking-incidents-at-total-of-16-financial-firms/articleshow/134934492.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:12:00.955420Z",
+    "http_status": 200,
+    "id": "20f079e56b3ba63b",
+    "url": "https://economictimes.indiatimes.com/tech/catalysts/why-india-cannot-build-a-world-class-fintech-champ-yet/articleshow/131173869.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:04.640748Z",
+    "http_status": 200,
+    "id": "210fcfdc6458b9d8",
+    "url": "http://economictimes.indiatimes.com/tech/ites/vishal-sikkas-letter-to-infosys-employees/articleshow/60113720.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:59.324902Z",
+    "http_status": 200,
+    "id": "2980ef3d9f9b4c9a",
+    "url": "https://economictimes.indiatimes.com/tech/catalysts/the-next-10-years-of-upi-promise-to-be-bigger-and-better-pine-labs-amrish-rau/articleshow/133494083.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:53.565464Z",
+    "http_status": 200,
+    "id": "388b561a1df53c6f",
+    "url": "https://economictimes.indiatimes.com/tech/catalysts/building-indias-growth-through-msmes-and-technology-vidit-aatrey/articleshow/127844383.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:55.305597Z",
+    "http_status": 200,
+    "id": "3d8de0992f88e42f",
+    "url": "https://economictimes.indiatimes.com/tech/catalysts/decoding-gen-zs-experience-first-new-commerce-playbook/articleshow/126292084.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:12:15.881110Z",
+    "http_status": 200,
+    "id": "41dfcef538e6c9db",
+    "url": "https://economictimes.indiatimes.com/tech/information-tech/hcltechs-q2-net-profit-up-21-to-rs-5132-crore-revenue-climbs-11/articleshow/134900674.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:46.710970Z",
+    "http_status": 200,
+    "id": "45a3700e51fbe014",
+    "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/uk-given-access-to-safety-test-latest-ai-models-minister-says/articleshow/134901262.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:11.567946Z",
+    "http_status": 200,
+    "id": "4fe1054c3616ec1a",
+    "url": "https://economictimes.indiatimes.com/industry/tech/financial-institutions-confront-a-new-operating-reality-as-markets-become-more-continuous/articleshow/133648267.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:57.665651Z",
+    "http_status": 200,
+    "id": "51c839b0bbc34619",
+    "url": "https://economictimes.indiatimes.com/tech/catalysts/future-signals-spotting-the-shifts-before-they-become-headlines/articleshow/126378633.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:12:25.279379Z",
+    "http_status": 200,
+    "id": "5b6764300bbd2363",
+    "url": "https://economictimes.indiatimes.com/tech/newsletters/morning-dispatch/winners-of-the-et-startup-awards-2026-to-be-feted-today/articleshow/134804055.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:06.370550Z",
+    "http_status": 200,
+    "id": "5c32ac080c59d2d4",
+    "url": "http://economictimes.indiatimes.com/tech/ites/when-you-gotta-go-you-gotta-go-former-infosys-board-member-tells-murthy-in-open-letter/articleshow/60169401.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:12:17.459859Z",
+    "http_status": 200,
+    "id": "5d60fa743090197a",
+    "url": "https://economictimes.indiatimes.com/tech/information-tech/high-data-centre-chip-costs-and-cheaper-ai-models-pose-risks-to-capacity-usage-infosys-ceo/articleshow/134918407.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:16.530901Z",
+    "http_status": 200,
+    "id": "5e4dceae0013599e",
+    "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/anthropic-says-new-safeguards-sharply-reduce-ai-distillation-attacks/articleshow/134906398.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:25.013743Z",
+    "http_status": 200,
+    "id": "60b08c01aeb2d1c1",
+    "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/eu-takes-a-page-from-irelands-ai-playbook/articleshow/134931453.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:13.176582Z",
+    "http_status": 200,
+    "id": "65598f52343df7bb",
+    "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/amd-ceo-lisa-su-courts-korean-ai-chipmakers-as-it-takes-on-nvidia/articleshow/134779443.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:21.583651Z",
+    "http_status": 200,
+    "id": "68eae938b7a827a3",
+    "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/character-ai-files-for-bankruptcy-agrees-to-sell-some-assets-to-disney-for-20-million/articleshow/134908390.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:51.778549Z",
+    "http_status": 200,
+    "id": "69d91ddce0448cd3",
+    "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/why-ai-makes-computer-worms-harder-to-stop/articleshow/134932397.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:12:07.598886Z",
+    "http_status": 200,
+    "id": "6f4ba27fc1987971",
+    "url": "https://economictimes.indiatimes.com/tech/funding/the-wealth-company-aif-invests-rs-400-crore-in-boldfit/articleshow/134894679.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:09.957536Z",
+    "http_status": 200,
+    "id": "7069400571a1d59f",
+    "url": "http://economictimes.indiatimes.com/tech/software/know-how-fast-is-tez-googles-new-mobile-payments-app/articleshow/60728161.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:12:14.287579Z",
+    "http_status": 200,
+    "id": "75feb629f9285ac9",
+    "url": "https://economictimes.indiatimes.com/tech/information-tech/ai-services-may-account-for-almost-half-of-infosys-work-in-2-3-years-ceo-salil-parekh/articleshow/134919388.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:50.184046Z",
+    "http_status": 200,
+    "id": "773c6e19da3d67f5",
+    "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/us-reverses-course-on-britains-testing-of-ai-models/articleshow/134882085.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:19.894885Z",
+    "http_status": 200,
+    "id": "7c80aef0d74a3a7f",
+    "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/anthropic-warns-of-ai-worms-spreading-across-smart-gadgets/articleshow/134919969.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:12:19.147295Z",
+    "http_status": 200,
+    "id": "842e7e0cdccea5f5",
+    "url": "https://economictimes.indiatimes.com/tech/ites/im-disappointed-with-infosys-board-narayana-murthy/articleshow/61208198.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:12:22.221169Z",
+    "http_status": 200,
+    "id": "89bee16e8aef48c1",
+    "url": "https://economictimes.indiatimes.com/tech/newsletters/morning-dispatch/the-et-startup-awards-2026-special/articleshow/134880370.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T09:50:39.573536Z",
+    "http_status": 200,
+    "id": "98665b060521bf2e",
+    "url": "http://economictimes.indiatimes.com/tech/internet/jio-rolls-out-early-security-refund-policy-for-its-new-4g-feature-phone/articleshow/60847526.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:12:26.808536Z",
+    "http_status": 200,
+    "id": "adde8646c258eea1",
+    "url": "https://economictimes.indiatimes.com/tech/newsletters/tech-top-5/the-et-startup-awards-2026-special/articleshow/134837443.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T09:35:36.411647Z",
+    "http_status": 200,
+    "id": "afd239e4cafd197d",
+    "url": "http://economictimes.indiatimes.com/tech/hardware/apple-to-launch-iphone-8-8-plus-in-india-at-6-pm-on-september-29/articleshow/60725151.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:14.887133Z",
+    "http_status": 200,
+    "id": "b673ba28ba8ddf90",
+    "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/anthropic-ceo-dario-amodei-made-18-million-last-year-middle-of-the-tech-ceo-pack/articleshow/134739190.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:12:02.590309Z",
+    "http_status": 200,
+    "id": "bcb1d84f18d9200c",
+    "url": "https://economictimes.indiatimes.com/tech/funding/agilent-to-buy-pathology-software-maker-proscia-for-240-million/articleshow/134917509.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:36.671065Z",
+    "http_status": 200,
+    "id": "c1dbd7c3c2162189",
+    "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/ntt-data-in-final-talks-to-build-anthropics-first-data-centre-in-japan-nikkei-reports/articleshow/134906918.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T09:50:32.864070Z",
+    "http_status": 200,
+    "id": "c978cb9be93034c7",
+    "url": "http://economictimes.indiatimes.com/tech/hardware/jiophone-delivery-deferred-know-how-to-track-your-phone/articleshow/60765052.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:00.747982Z",
+    "http_status": 200,
+    "id": "cb10580073496f96",
+    "url": "http://economictimes.indiatimes.com/tech/ites/after-sikka-infosys-design-head-sanjay-rajagopalan-quits/articleshow/60727941.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:18.152804Z",
+    "http_status": 200,
+    "id": "cef9e6d0bc828b75",
+    "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/anthropic-seeks-rehearing-of-case-over-pentagons-security-risk-branding/articleshow/134930323.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:26.650782Z",
+    "http_status": 200,
+    "id": "d20fb857ec87bb45",
+    "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/from-growing-demand-for-ai-to-premium-upgrades-amazon-india-reveals-what-customers-want-ahead-of-amazon-great-indian-festival-2026/articleshow/134729445.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:12:09.387996Z",
+    "http_status": 200,
+    "id": "d53a7b54d44b7721",
+    "url": "https://economictimes.indiatimes.com/tech/funding/yc-backed-ai-video-creation-startup-clueso-raises-10-million-led-by-dharana-capital/articleshow/134914882.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:12:28.678996Z",
+    "http_status": 200,
+    "id": "d5453508ed87f7c9",
+    "url": "https://economictimes.indiatimes.com/tech/startups/articlelist/78570540.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:12:04.235970Z",
+    "http_status": 200,
+    "id": "d950a8df37565e2e",
+    "url": "https://economictimes.indiatimes.com/tech/funding/fintech-funding-rises-14-to-2-2-billion-in-jan-sep-deal-count-falls-41-tracxn/articleshow/134908441.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:28.449701Z",
+    "http_status": 200,
+    "id": "d9a0c44fee45f186",
+    "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/gupshup-launches-ai-avatar-agent-to-enable-video-interactions-with-customers/articleshow/134932586.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:33.367526Z",
+    "http_status": 200,
+    "id": "dae07ea609efcb13",
+    "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/meta-releases-muse-wonder-ai-models-to-challenge-anthropic-and-openai/articleshow/134901136.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:10:58.895964Z",
+    "http_status": 200,
+    "id": "dec224283c92e636",
+    "url": "http://economictimes.indiatimes.com/tech/ites/400-executives-accept-cognizants-voluntary-separation-package/articleshow/59939747.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T09:50:31.156703Z",
+    "http_status": 200,
+    "id": "e5ca6d9f0d19122a",
+    "url": "http://economictimes.indiatimes.com/tech/hardware/jio-4g-phone-booking-to-start-today-here-is-how-you-can-book/articleshow/60205275.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:12:11.082944Z",
+    "http_status": 200,
+    "id": "ebef2ba2b4b2d647",
+    "url": "https://economictimes.indiatimes.com/tech/information-tech/20000-plus-people-shift-as-it-firms-buy-gcc-captive-tech-carve-outs/articleshow/134711217.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:12:30.293300Z",
+    "http_status": 200,
+    "id": "f4516222e45a0881",
+    "url": "https://economictimes.indiatimes.com/tech/startups/blume-speciale-kalaari-chiratae-others-part-of-first-cohort-to-receive-rs-7131-crore-rdi-fund/articleshow/134909489.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:41.754615Z",
+    "http_status": 200,
+    "id": "f4cc03a649f9dc82",
+    "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/softbank-junk-bond-sale-raises-stakes-for-ceo-sons-all-in-ai-bet/articleshow/134930375.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:12:12.708234Z",
+    "http_status": 200,
+    "id": "f93495505744b671",
+    "url": "https://economictimes.indiatimes.com/tech/information-tech/ai-revenue-should-offset-traditional-services-deflation-tcs-ceo-k-krithivasan/articleshow/134880832.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:11:02.699184Z",
+    "http_status": 200,
+    "id": "fad547cd826b0e56",
+    "url": "http://economictimes.indiatimes.com/tech/ites/narayana-murthy-hits-back-at-infosys-board-says-not-chasing-money-or-power/articleshow/60117186.cms"
+  },
+  {
+    "fetched_at": "2026-10-14T10:12:05.988863Z",
+    "http_status": 200,
+    "id": "ff6053e777604cb4",
+    "url": "https://economictimes.indiatimes.com/tech/funding/info-edge-board-approves-rs-200-cr-investment-in-two-wholly-owned-subsidiaries/articleshow/134915464.cms"
+  }
+]
