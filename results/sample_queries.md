@@ -26,7 +26,6 @@ Sources:
 - https://economictimes.indiatimes.com/tech/funding/fintech-funding-rises-14-to-2-2-billion-in-jan-sep-deal-count-falls-41-tracxn/articleshow/134908441.cms
 - https://economictimes.indiatimes.com/tech/startups/ettech-deals-digest-boldfit-greencell-lead-as-weekly-funding-hits-232-million-down-45-on-year/articleshow/134999523.cms
 
-Correctness note: Sources are corpus-backed; synthesized with Gemini (with deterministic extractive fallback when run without API key).
 
 ## 2. List all articles mentioning Bengaluru.
 
@@ -46,7 +45,6 @@ Sources:
 - https://economictimes.indiatimes.com/tech/ites/im-disappointed-with-infosys-board-narayana-murthy/articleshow/61208198.cms
 - https://economictimes.indiatimes.com/tech/startups/blume-speciale-kalaari-chiratae-others-part-of-first-cohort-to-receive-rs-7131-crore-rdi-fund/articleshow/134909489.cms
 
-Correctness note: Sources are corpus-backed; without a Gemini key the answer is deterministic and extractive.
 
 ## 3. What does the corpus say about AI?
 
@@ -64,7 +62,6 @@ Sources:
 - https://economictimes.indiatimes.com/tech/artificial-intelligence/uk-given-access-to-safety-test-latest-ai-models-minister-says/articleshow/134901262.cms
 - https://economictimes.indiatimes.com/tech/artificial-intelligence/us-reverses-course-on-britains-testing-of-ai-models/articleshow/134882085.cms
 
-Correctness note: Sources are corpus-backed; without a Gemini key the answer is deterministic and extractive.
 
 ## 4. Find the article titled "Meta says its new AI models on par with OpenAI, Anthropic"
 
@@ -74,7 +71,6 @@ Matching corpus excerpts:
 Sources:
 - https://economictimes.indiatimes.com/tech/artificial-intelligence/meta-says-its-new-ai-models-on-par-with-openai-anthropic/articleshow/134906480.cms
 
-Correctness note: Sources are corpus-backed; without a Gemini key the answer is deterministic and extractive.
 
 ## 5. Which investors are appearing in >1 funding round?
 
@@ -85,7 +81,6 @@ Sources:
 - https://economictimes.indiatimes.com/tech/artificial-intelligence/ai-credit-default-swap-spreads-widen-sharply/articleshow/134958105.cms
 - https://economictimes.indiatimes.com/tech/artificial-intelligence/softbank-junk-bond-sale-raises-stakes-for-ceo-sons-all-in-ai-bet/articleshow/134930375.cms
 
-Correctness note: Computed deterministically from validated structured funding metadata across all corpus records.
 
 ## 6. What AI stories are covered?
 
@@ -103,20 +98,10 @@ Sources:
 - https://economictimes.indiatimes.com/tech/information-tech/ai-revenue-should-offset-traditional-services-deflation-tcs-ceo-k-krithivasan/articleshow/134880832.cms
 - https://economictimes.indiatimes.com/tech/information-tech/ai-services-may-account-for-almost-half-of-infosys-work-in-2-3-years-ceo-salil-parekh/articleshow/134919388.cms
 
-Correctness note: Sources are corpus-backed; without a Gemini key the answer is deterministic and extractive.
 
-## 7. Summarize layoffs in the corpus.
-
-The answer cannot be found in the corpus.
-
-Sources: none
-
-Correctness note: Sources are corpus-backed; without a Gemini key the answer is deterministic and extractive.
-
-## 8. What is the weather today?
+## 7. What is the weather today?
 
 The answer cannot be found in the corpus.
 
 Sources: none
 
-Correctness note: Sources are corpus-backed; without a Gemini key the answer is deterministic and extractive.
